@@ -23,15 +23,16 @@ public class Pawn extends Piece {
     public void availableMoves() {
         this.availableLocation.clear ();
         //self.canAttack()
-        int i;
-        int j = this.index;
+        int i = this.row;
+        int j = this.col;
         //if its the first turn move 2 tiles
         if (this.turn == 0) {
             if (this.color.equals ("black")) {
-                // TODO add funcationality to get code
+
                 System.out.println ();
-                //this.availableLocation.add ()
-                //self.available_moves_list.append (self.board[i + 2][j])
+                this.availableLocation.add (this.board[i + 1][j]);
+                this.availableLocation.add (this.board[i + 2][j]);
+
             } else if (this.color.equals ("white")) {
                 this.availableLocation.add (this.board[i - 1][j]);
                 this.availableLocation.add (this.board[i - 2][j]);

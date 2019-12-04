@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 public abstract class Piece extends MouseAdapter {
     private Image image;
@@ -13,6 +14,7 @@ public abstract class Piece extends MouseAdapter {
     String color;
     String name;
     String location;
+    List<String> availableLocation;
 
     public Image getImage() {
         return image;
@@ -53,6 +55,9 @@ public abstract class Piece extends MouseAdapter {
     public void setY(int y) {
         this.y = y;
     }
+
+
+    public  abstract void availableMoves();
 
     public Piece(String name,String color, String location ) {
         this.x = 10;

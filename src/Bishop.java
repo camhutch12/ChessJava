@@ -1,6 +1,6 @@
 public class Bishop extends Piece{
-    public Bishop(String name,String color) {
-        super(name,color);
+    public Bishop(String name,String color,String location) {
+        super(name,color,location);
         setupImage(file);
     }
 

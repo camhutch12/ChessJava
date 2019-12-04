@@ -11,8 +11,9 @@ public class App extends JFrame {
 
     private void initUI() {
         add(new ChessB());
-        setSize(600, 550);
+        setSize(600, 600);
         setTitle("Application");
+        setResizable (false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 

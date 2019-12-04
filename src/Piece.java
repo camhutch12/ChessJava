@@ -12,6 +12,7 @@ public abstract class Piece extends MouseAdapter {
     String file;
     String color;
     String name;
+    String location;
 
     public Image getImage() {
         return image;
@@ -53,11 +54,12 @@ public abstract class Piece extends MouseAdapter {
         this.y = y;
     }
 
-    public Piece(String name,String color ) {
+    public Piece(String name,String color, String location ) {
         this.x = 10;
         this.y = 20;
         this.color =  color;
         this.name = name;
+        this.location = location;
 
     }
 

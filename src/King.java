@@ -1,6 +1,6 @@
 public class King extends Piece {
-    public King(String name,String color) {
-        super(name,color);
+    public King(String name,String color,String location) {
+        super(name,color,location);
         setupImage(file);
     }
 

@@ -11,11 +11,13 @@ public class App extends JFrame {
 
     private void initUI() {
         add(new ChessB());
-        setSize(600, 600);
+        setSize(620, 600);
+        //setPreferredSize(new Dimension(600,600));
         setTitle("Application");
-        setResizable (false);
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+
 
     }
 
@@ -23,6 +25,7 @@ public class App extends JFrame {
         EventQueue.invokeLater(() -> {
             App ex = new App();
             ex.setVisible(true);
+            System.out.println(ex.getSize());
 
         });
     }

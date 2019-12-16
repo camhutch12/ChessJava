@@ -3,7 +3,9 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class Piece extends MouseAdapter {
     private Image image;
@@ -17,6 +19,56 @@ public abstract class Piece extends MouseAdapter {
     String location;
     List<String> availableLocation;
     String[][] board;
+    static List<Piece> allPiecesOnBoard;
+    static List<Piece> blackPiecesOnBoard;
+    static List<Piece> whitePiecesOnBoard;
+    Map<String,Piece> canAttack;
+
+
+
+
+    public Piece(String name, String color, String location) {
+        this.x = 0;
+        this.y = 0;
+        this.color = color;
+        this.name = name;
+        this.location = location;
+        availableLocation = new ArrayList<> ();
+        this.board = getBoard ();
+        allPiecesOnBoard = new ArrayList<>();
+        blackPiecesOnBoard = new ArrayList<>();
+        whitePiecesOnBoard = new ArrayList<>();
+        this.canAttack = new HashMap<>();
+    }
+
+
+    public List<Piece> getAllPiecesOnBoard() {
+        return allPiecesOnBoard;
+    }
+
+
+    public static void setAllPiecesOnBoard(List<Piece> allPiecesOnBoard) {
+
+        Piece.allPiecesOnBoard = allPiecesOnBoard;
+    }
+
+    public List<Piece> getBlackPiecesOnBoard() {
+        return blackPiecesOnBoard;
+    }
+
+    public static void setBlackPiecesOnBoard(List<Piece> blackPiecesOnBoard) {
+
+        Piece.blackPiecesOnBoard = blackPiecesOnBoard;
+    }
+
+    public List<Piece> getWhitePiecesOnBoard() {
+        return whitePiecesOnBoard;
+    }
+
+    public static void setWhitePiecesOnBoard(List<Piece> whitePiecesOnBoard) {
+
+        Piece.whitePiecesOnBoard = whitePiecesOnBoard;
+    }
 
     public int getDy() {
         return dy;
@@ -146,15 +198,7 @@ public abstract class Piece extends MouseAdapter {
 
     public abstract void availableMoves();
 
-    public Piece(String name, String color, String location) {
-        this.x = 10;
-        this.y = 20;
-        this.color = color;
-        this.name = name;
-        this.location = location;
-        availableLocation = new ArrayList<> ();
-        this.board = getBoard ();
-    }
+
 
     public void loadImage(String file) {
         ImageIcon ii = new ImageIcon (file);
@@ -194,8 +238,62 @@ public abstract class Piece extends MouseAdapter {
 
 
     public Rectangle getBounds() {
-        return new Rectangle (x , y, width, height);
+        return new Rectangle (x , y, 75, 75);
 
+    }
+
+    public boolean checkCollision(Piece otherPiece){
+        Rectangle currentRec = this.getBounds();
+        Rectangle otherRec = otherPiece.getBounds();
+
+        if (currentRec.intersects(otherRec)){
+            System.out.println("A Collision has occued");
+            System.out.println(otherPiece.location + " OtherPiece is " + otherPiece);
+            return true;
+        }
+
+        else {
+            return false;
+        }
+
+
+
+    }
+
+
+
+
+    public void checkPieces() {
+        List<Piece> pplist = new ArrayList<>();
+        for (Piece piece :
+                Piece.allPiecesOnBoard) {
+            if (this.availableLocation.contains(piece.location)) {
+                for (String p :
+                        this.availableLocation) {
+                    if (p.equals(piece.location)) {
+                        System.out.println(piece.location + "This current Piece is " + p);
+                        pplist.add(piece);
+                    }
+                }
+            }
+        }
+        this.modifyAvailbaleMovesList(pplist);
+
+    }
+
+    public void modifyAvailbaleMovesList(List<Piece> allPiecesList) {
+        for (Piece p :
+                allPiecesList) {
+            if (this.color.equals("white")) {
+                if (p.color.equals("white")) {
+                    this.availableLocation.removeIf(s -> p.location.equals(s));
+
+                } else if (this.color.equals("black")) {
+
+                }
+            }
+
+        }
     }
 
     public void setIndex(){

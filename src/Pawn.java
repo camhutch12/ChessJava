@@ -25,8 +25,7 @@ public class Pawn extends Piece {
     public void availableMoves() {
         this.availableLocation.clear();
         this.canAttack.clear();
-        if (this.location.equals("e5"))
-            System.out.println();
+
         if (this.color.equals("white")) {
             helperAvailableMoves(Piece.whitePiecesOnBoard, Piece.blackPiecesOnBoard);
         } else if (this.color.equals("black")) {
@@ -120,7 +119,7 @@ public class Pawn extends Piece {
                 this.checkPieces();
                 System.out.println();
             } catch (IndexOutOfBoundsException e) {
-
+                System.out.println();
             }
 
         }

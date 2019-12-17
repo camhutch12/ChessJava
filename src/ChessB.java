@@ -47,6 +47,57 @@ public class ChessB extends JPanel implements ActionListener {
         initUI();
     }
 
+    private void initUI() {
+        addMouseListener(new Tadapter());
+        get_starting_points();
+        setupMap();
+        for (int i = 0; i < 8; i++) {
+            Piece pawn = new Pawn("Pawn" + i, "white", board_locations[6][i]);
+            pawn.setBoard(this.board_locations);
+
+
+            int x = (int) ((double) pixelCords[6][i].x);
+            int y = (int) ((double) pixelCords[6][i].y);
+            pawn.setX(x);
+            pawn.setY(y);
+            pawnArray.add(pawn);
+        }
+
+
+        for (int i = 8; i < 16; i++) {
+            Piece pawn = new Pawn("Pawn" + i, "black", board_locations[1][i - 8]);
+
+            // System.out.println(pixelCords[1][i - 8].x + "were also printing y" + pixelCords[1][i - 8].y);
+            int x = (int) ((double) pixelCords[1][i - 8].x);
+            int y = (int) ((double) pixelCords[1][i - 8].y);
+            //System.out.println(x + "were also printing y" + y);
+            pawn.setX(x);
+            pawn.setY(y);
+            pawnArray.add(pawn);
+        }
+
+        for (int i = 0; i < 8; i++) {
+
+
+            int x = (int) ((double) pixelCords[0][i].x);
+            int y = (int) ((double) pixelCords[0][i].y);
+            this.black_pieces.get(i).setX(x);
+            this.black_pieces.get(i).setY(y);
+
+            x = (int) ((double) pixelCords[7][i].x);
+            y = (int) ((double) pixelCords[7][i].y);
+            this.whitePieces.get(i).setX(x);
+            this.whitePieces.get(i).setY(y);
+
+        }
+
+        allPiecesOnBoard.addAll(pawnArray);
+        setUpIndex();
+        this.setupPiecesLists();
+
+
+    }
+
     // does the basic intilization of the Chess peices
     // this is all for the graphical interface
     private void initPieces() {
@@ -91,7 +142,8 @@ public class ChessB extends JPanel implements ActionListener {
 
 
     }
-
+    // does is sets up the index of where a location will be
+    // both there rows and columns
     private void setUpIndex() {
         for (Piece p : allPiecesOnBoard) {
             for (int i = 0; i < board_locations.length; i++) {
@@ -107,6 +159,8 @@ public class ChessB extends JPanel implements ActionListener {
         }
     }
 
+    // This function is used to intilize the map which consists of
+    // the location, and the cordinate which relate to that location in the GUI
     private void setupMap() {
         for (int i = 0; i < board_locations.length; i++) {
             for (int j = 0; j < board_locations.length; j++) {
@@ -116,58 +170,12 @@ public class ChessB extends JPanel implements ActionListener {
         System.out.println("working");
     }
 
-    private void initUI() {
-        addMouseListener(new Tadapter());
-        get_starting_points();
-        setupMap();
-        for (int i = 0; i < 8; i++) {
-            Piece pawn = new Pawn("Pawn" + i, "white", board_locations[6][i]);
-            pawn.setBoard(this.board_locations);
 
 
-            int x = (int) ((double) pixelCords[6][i].x);
-            int y = (int) ((double) pixelCords[6][i].y);
-            pawn.setX(x);
-            pawn.setY(y);
-            pawnArray.add(pawn);
-        }
 
-
-        for (int i = 8; i < 16; i++) {
-            Piece pawn = new Pawn("Pawn" + i, "black", board_locations[1][i - 8]);
-
-            System.out.println(pixelCords[1][i - 8].x + "were also printing y" + pixelCords[1][i - 8].y);
-            int x = (int) ((double) pixelCords[1][i - 8].x);
-            int y = (int) ((double) pixelCords[1][i - 8].y);
-            System.out.println(x + "were also printing y" + y);
-            pawn.setX(x);
-            pawn.setY(y);
-            pawnArray.add(pawn);
-        }
-
-        for (int i = 0; i < 8; i++) {
-
-
-            int x = (int) ((double) pixelCords[0][i].x);
-            int y = (int) ((double) pixelCords[0][i].y);
-            this.black_pieces.get(i).setX(x);
-            this.black_pieces.get(i).setY(y);
-
-            x = (int) ((double) pixelCords[7][i].x);
-            y = (int) ((double) pixelCords[7][i].y);
-            this.whitePieces.get(i).setX(x);
-            this.whitePieces.get(i).setY(y);
-
-        }
-
-        allPiecesOnBoard.addAll(pawnArray);
-        setUpIndex();
-        this.setupPiecesLists();
-
-
-    }
-
-    // this is used for getting a list of the white peices and black peices
+    // this is function create two seperate list
+    // one for the blackChess pieces
+    // one for the whiteChess pieces
     private void setupPiecesLists() {
         for (Piece piece : this.allPiecesOnBoard) {
             if (piece.color.equals("black")) {
@@ -190,13 +198,13 @@ public class ChessB extends JPanel implements ActionListener {
         double startposX = 0;
         double startposY = 0;
         double heightPerSqaure = w / 8;
-        System.out.println(heightPerSqaure);
+       // System.out.println(heightPerSqaure);
         double widthPerSqaure = h / 8;
         double middleWidth = widthPerSqaure / 2;
-        System.out.println(middleWidth);
-        System.out.println(widthPerSqaure);
+        //System.out.println(middleWidth);
+       // System.out.println(widthPerSqaure);
         double middleHeight = middleWidth;
-        System.out.println(middleHeight + " is ");
+       // System.out.println(middleHeight + " is ");
         int count1 = 0;
 
 
@@ -205,7 +213,7 @@ public class ChessB extends JPanel implements ActionListener {
             for (int j = 0; j < 8; j++) {
 
                 Rectangle rectangle = new Rectangle((int) startposX, (int) startposY, (int) widthPerSqaure, (int) heightPerSqaure);
-                System.out.println(rectangle);
+              //  System.out.println(rectangle);
                 cords[count1][count2] = rectangle;
                 //Pair<Double, Double> points = new Pair (middleWidth, middleHeight);
                 Pair<Double, Double> points;
@@ -330,11 +338,14 @@ public class ChessB extends JPanel implements ActionListener {
             g2g.drawImage(piece1.getImage(), piece1.x, piece1.y, this);
 
         }
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < this.black_pieces.size(); i++)
             g2g.drawImage(this.black_pieces.get(i).getImage(), this.black_pieces.get(i).x, this.black_pieces.get(i).y, this);
-            System.out.println(this.whitePieces.get(i).getX() + " y:" + this.whitePieces.get(i).y);
+         //   System.out.println(this.whitePieces.get(i).getX() + " y:" + this.whitePieces.get(i).y);
+        for (int i = 0; i < this.whitePieces.size(); i++) {
+
             g2g.drawImage(this.whitePieces.get(i).getImage(), this.whitePieces.get(i).x, this.whitePieces.get(i).y, this);
         }
+
 
 
     }
@@ -360,10 +371,133 @@ public class ChessB extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         System.out.println("Move");
         //piece.move ();
-        repaint(piece.getX(), piece.getY() - 1, piece.width, piece.height);
+        repaint(piece.getX(), piece.getY(), piece.width, piece.height);
+    }
+
+
+
+    private void selectedPieceMove(Piece selectedPiece, Rectangle rectangle) {
+        Piece piece = selectedPiece;
+        String key = this.keys(this.mapLocationToCords, rectangle).findFirst().get();
+        Piece otherPiece;
+
+        if (piece.availableLocation.contains(key)) {
+            if (containsPiece(key)) {
+                otherPiece = getPiece(key);
+
+            } else {
+                otherPiece = null;
+            }
+
+            if (otherPiece == null) {
+                piece.location = key;
+                piece.setX((int) rectangle.getX());
+                piece.setY((int) rectangle.getY());
+                piece.move(key);
+
+            } else {
+                String oldLocation = piece.location;
+                int oldX = piece.getX();
+                int oldY = piece.getY();
+
+                piece.location = key;
+                piece.setX((int) rectangle.getX());
+                piece.setY((int) rectangle.getY());
+                piece.move(key);
+
+                if (piece.checkCollision(otherPiece)) {
+                    System.out.println("Need to remove other peice");
+                    Piece.allPiecesOnBoard.remove(otherPiece);
+                    this.allPiecesOnBoard.remove(otherPiece);
+                    if (otherPiece.color.equals("black")){
+                        Piece.blackPiecesOnBoard.remove(otherPiece);
+                        this.blackPiecesOnBoard.remove(otherPiece);
+                    }
+                    else if (otherPiece.color.equals("white")) {
+                        Piece.whitePiecesOnBoard.remove(otherPiece);
+                        this.whitePiecesOnBoard.remove(otherPiece);
+
+
+                    }
+               //     System.out.println(otherPiece.getClass());
+               //     System.out.println(otherPiece.getClass().isInstance("Pawn"));
+                    if (otherPiece instanceof Pawn){
+                        this.pawnArray.remove(otherPiece);
+                        this.shadedTiles.clear();
+                    }
+                    else {
+                        if (otherPiece.color.equals("white")){
+                            this.whitePieces.remove(otherPiece);
+                        }
+                        else if (otherPiece.color.equals("black")){
+                            this.black_pieces.remove(otherPiece);
+                        }
+                    }
+
+                    repaint();
+
+
+
+
+                }
+                else {
+                    piece.location = oldLocation;
+                    piece.setX(oldX);
+                    piece.setY(oldY);
+                    piece.move(oldLocation);
+                }
+
+
+
+            }
+        } else return;
+
+
+    }
+
+    private Piece getPiece(String key) {
+        for (Piece p : this.allPiecesOnBoard
+        ) {
+            if (p.location.equals(key)) return p;
+        }
+        return null;
+    }
+
+    private boolean containsPiece(String key) {
+        for (Piece p : this.allPiecesOnBoard
+        ) {
+            if (p.location.equals(key))
+                return true;
+        }
+        return false;
+
+    }
+
+    private void shadeTiles(Piece clickedPiece, int posX, int posY) {
+        this.shadedTiles.clear();
+        if (clickedPiece != null) {
+            System.out.println(clickedPiece);
+            this.selectedPiece = clickedPiece;
+            this.selectedPiece_loc = clickedPiece.location;
+            clickedPiece.availableMoves();
+            java.util.List<String> available_moves = clickedPiece.availableLocation;
+
+            if (available_moves != null) {
+                for (String s : available_moves) {
+                    Rectangle rec = mapLocationToCords.get(s);
+//                    System.out.println("rec min in" + rec.getMinX() + "," + rec.getMinY());
+//                    System.out.println("rec max in" + rec.getMaxX() + "," + rec.getMaxY());
+                    this.shadedTiles.add(rec);
+
+                }
+                System.out.println(available_moves.toString());
+            }
+
+        }
     }
 
     private class Tadapter extends MouseAdapter {
+
         @Override
         public void mouseClicked(MouseEvent e) {
             Rectangle tile = null;
@@ -430,115 +564,14 @@ public class ChessB extends JPanel implements ActionListener {
 
     }
 
-    private void selectedPieceMove(Piece selectedPiece, Rectangle rectangle) {
-        Piece piece = selectedPiece;
-        String key = this.keys(this.mapLocationToCords, rectangle).findFirst().get();
-        Piece otherPiece;
-
-        if (piece.availableLocation.contains(key)) {
-            if (containsPiece(key)) {
-                otherPiece = getPiece(key);
-
-            } else {
-                otherPiece = null;
-            }
-
-            if (otherPiece == null) {
-                piece.location = key;
-                piece.setX((int) rectangle.getX());
-                piece.setY((int) rectangle.getY());
-                piece.move(key);
-
-            } else {
-                String oldLocation = piece.location;
-                int oldX = piece.getX();
-                int oldY = piece.getY();
-
-                piece.location = key;
-                piece.setX((int) rectangle.getX());
-                piece.setY((int) rectangle.getY());
-                piece.move(key);
-
-                if (piece.checkCollision(otherPiece)) {
-                    System.out.println("Need to remove other peice");
-                    Piece.allPiecesOnBoard.remove(otherPiece);
-                    this.allPiecesOnBoard.remove(otherPiece);
-                    if (otherPiece.color.equals("black")){
-                        Piece.blackPiecesOnBoard.remove(otherPiece);
-                        this.blackPiecesOnBoard.remove(otherPiece);
-                    }
-                    else if (otherPiece.color.equals("white")) {
-                        Piece.whitePiecesOnBoard.remove(otherPiece);
-                        this.whitePiecesOnBoard.remove(otherPiece);
-
-
-                    }
-
-                    this.pawnArray.remove(otherPiece);
-                    this.shadedTiles.clear();
-                    repaint();
-
-
-
-
-                }
-                else {
-                    piece.location = oldLocation;
-                    piece.setX(oldX);
-                    piece.setY(oldY);
-                    piece.move(oldLocation);
-                }
-
-
-
-            }
-        } else return;
-
-
-    }
-
-    private Piece getPiece(String key) {
-        for (Piece p : this.allPiecesOnBoard
-        ) {
-            if (p.location.equals(key)) return p;
-        }
-        return null;
-    }
-
-    private boolean containsPiece(String key) {
-        for (Piece p : this.allPiecesOnBoard
-        ) {
-            if (p.location.equals(key))
-                return true;
-        }
-        return false;
-
-    }
-
-    private void shadeTiles(Piece clickedPiece, int posX, int posY) {
-        this.shadedTiles.clear();
-        if (clickedPiece != null) {
-            System.out.println(clickedPiece);
-            this.selectedPiece = clickedPiece;
-            this.selectedPiece_loc = clickedPiece.location;
-            clickedPiece.availableMoves();
-            java.util.List<String> available_moves = clickedPiece.availableLocation;
-
-            if (available_moves != null) {
-                for (String s : available_moves) {
-                    Rectangle rec = mapLocationToCords.get(s);
-//                    System.out.println("rec min in" + rec.getMinX() + "," + rec.getMinY());
-//                    System.out.println("rec max in" + rec.getMaxX() + "," + rec.getMaxY());
-                    this.shadedTiles.add(rec);
-
-                }
-                System.out.println(available_moves.toString());
-            }
+    private void playGame(){
+        String player1 = "white";
+        String player2 = "black";
+        boolean isCheckMate = false;
+        while (!isCheckMate){
 
         }
     }
-
-
 }
 
 

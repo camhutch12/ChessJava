@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -408,4 +409,23 @@ public class King extends Piece {
         System.out.println();
     }
 
+    public void isInCheck(){
+        List<Piece> whoCanKill = new ArrayList<>();
+        if (this.color.equals("black")){
+
+            for (Piece p :
+                    Piece.whitePiecesOnBoard) {
+                p.availableMoves();
+                if (p.availableLocation.contains(this.location)){
+                    whoCanKill.add(p);
+                }
+
+
+            }
+
+        }
+        else if (this.color.equals("white")){
+
+        }
+    }
 }

@@ -27,6 +27,7 @@ public class App extends JFrame {
             ex.setVisible(true);
             System.out.println(ex.getSize());
 
+
         });
     }
 }

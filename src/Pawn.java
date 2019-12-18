@@ -1,24 +1,147 @@
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Pawn extends Piece {
 
     private Image image;
-    private int turn;
 
+    private List<String> whiteToBeQueen;
+    private List<String> blackToBeQueen;
+
+
+    public List<String> getWhiteToBeQueen() {
+        return whiteToBeQueen;
+    }
+
+    public void setWhiteToBeQueen(List<String> whiteToBeQueen) {
+        this.whiteToBeQueen = whiteToBeQueen;
+    }
+
+    public List<String> getBlackToBeQueen() {
+        return blackToBeQueen;
+    }
+
+    public void setBlackToBeQueen(List<String> blackToBeQueen) {
+        this.blackToBeQueen = blackToBeQueen;
+    }
 
     Pawn(String name, String color, String location) {
         super(name, color, location);
+        whiteToBeQueen = new ArrayList<>();
+        blackToBeQueen = new ArrayList<>();
         setupImage(file);
+        //setupForPawnToQueenLists();
 
 
+    }
+
+    public void setupForPawnToQueenLists() {
+        for (int i = 0; i < this.board.length; i++) {
+            this.whiteToBeQueen.add(this.board[0][i]);
+            this.blackToBeQueen.add(this.board[7][i]);
+        }
     }
 
     @Override
     public void setupImage(String file) {
         this.file = this.color == "white" ? "white-pawn.png" : "black-pawn.png";
         loadImage(this.file);
+    }
+
+    @Override
+    public void findRoute() {
+        if (this.color.equals("white")) {
+            //helperFindRoute();
+
+        } else if (this.color.equals("black")) {
+
+        }
+    }
+
+    public void helperFindRoute(String location, List<Piece> oppentList){
+        int row = this.row;
+        int col = this.col;
+        Piece oppent = null;
+        Piece oppent2 = null;
+        String currentSpotChecking = "";
+        String currentSpotChecking2 = "";
+        boolean noPieceInWay1 = true;
+        boolean noPieceInWay2 = true;
+
+        int value = 1;
+        int value2 = 2;
+        if (this.color.equals("white")) {
+            value *= -1;
+            value2 *= -1;
+        }
+
+        if (this.color.equals("black")) {
+            if (this.row + 1 > -1 && this.row + 1 < 8 && this.col + 1 > -1 && this.col + 1 < 8) {
+                currentSpotChecking = this.board[row + 1][col + 1];
+                for (Piece piece : oppentList) {
+
+                    // this means that there is a piece on that location
+                    if (piece.location.equals(currentSpotChecking)) {
+                        this.routeToCheck.add(currentSpotChecking);
+
+                    }
+
+                }
+
+            }
+            if (this.row + 1 > -1 && this.row + 1 < 8 && this.col - 1 > -1 && this.col - 1 < 8) {
+                currentSpotChecking2 = this.board[row + 1][col - 1];
+                for (Piece piece : oppentList) {
+
+                    // this means that there is a piece on that location
+
+                    if (piece.location.equals(currentSpotChecking2)) {
+                        this.routeToCheck.add(currentSpotChecking2);
+
+                    }
+                }
+            }
+        } else if (this.color.equals("white")) {
+
+            if (this.row - 1 > -1 && this.row - 1 < 8 && this.col + 1 > -1 && this.col + 1 < 8) {
+                currentSpotChecking2 = this.board[row - 1][col + 1];
+                for (Piece piece : oppentList) {
+
+                    // this means that there is a piece on that location
+
+                    if (piece.location.equals(currentSpotChecking2)) {
+                        this.routeToCheck.add(currentSpotChecking2);
+
+                    }
+                }
+
+            }
+
+            if (this.row - 1 > -1 && this.row - 1 < 8 && this.col - 1 > -1 && this.col - 1 < 8) {
+                currentSpotChecking = this.board[row - 1][col - 1];
+                for (Piece piece : oppentList) {
+
+                    // this means that there is a piece on that location
+                    if (piece.location.equals(currentSpotChecking)) {
+                        this.routeToCheck.add(currentSpotChecking);
+                    }
+
+                }
+            }
+
+
+        }
+
+
+
+        this.checkPieces();
+        System.out.println();
+
+
+
+
     }
 
     @Override
@@ -35,17 +158,21 @@ public class Pawn extends Piece {
 
     }
 
+
+
     private void helperAvailableMoves(java.util.List<Piece> colorList, List<Piece> oppentList) {
+
         int row = this.row;
         int col = this.col;
         Piece oppent = null;
         Piece oppent2 = null;
         String currentSpotChecking = "";
         String currentSpotChecking2 = "";
-        AtomicBoolean moveOne = new AtomicBoolean(true);
-        AtomicBoolean moveTwo = new AtomicBoolean(true);
-        AtomicBoolean oppentNorthWest = new AtomicBoolean(true);
-        AtomicBoolean oppentP2 = new AtomicBoolean(true);
+        String finalCurrentSpotChecking;
+        String finalCurrentSpotChecking2 = null;
+        boolean noPieceInWay1 = true;
+        boolean noPieceInWay2 = true;
+
         int value = 1;
         int value2 = 2;
         if (this.color.equals("white")) {
@@ -53,76 +180,151 @@ public class Pawn extends Piece {
             value2 *= -1;
         }
 
-            try {
-                if (moveOne.get() && oppentNorthWest.get() && moveTwo.get()) {
-                    currentSpotChecking = this.board[row + value][col];
-                    currentSpotChecking2 = this.board[row + value2][col];
 
-                    String finalCurrentSpotChecking = currentSpotChecking;
-                    String finalCurrentSpotChecking2 = currentSpotChecking2;
-                    colorList.forEach((piece -> {
-                        if (piece.location.equals(finalCurrentSpotChecking)) {
-                            moveOne.set(false);
-                        }
-                        if (piece.location.equals(finalCurrentSpotChecking2)) {
-                            moveTwo.set(false);
-                        }
-                    }));
-                }
-                if (oppentNorthWest.get() && moveOne.get()) {
-
-                    if (this.color.equals("black")) {
-                        currentSpotChecking = this.board[row + value][col + value];
-                        currentSpotChecking2 = this.board[row + 1][col - 1];
-                    } else if (this.color.equals("white")) {
-                        currentSpotChecking2 = this.board[row - 1][col + 1];
-
+        if (this.turn == 0) {
+            if (this.row + value > -1 && this.row + value < 8) {
+                currentSpotChecking = this.board[row + value][col];
+                for (Piece piece : this.getAllPiecesOnBoard()) {
+                    if (piece.location.equals(currentSpotChecking)) {
+                        noPieceInWay1 = false;
+                        noPieceInWay2 = false;
                     }
 
+                }
 
-                    String finalCurrentSpotChecking = currentSpotChecking;
-                    String finalCurrentSpotChecking2 = currentSpotChecking2;
-                    for (Piece piece : oppentList) {
-                        if (piece.location.equals(finalCurrentSpotChecking)) {
-                            oppent = piece;
-                            oppentNorthWest.set(false);
-                        }
-                        if (piece.location.equals(finalCurrentSpotChecking2)) {
-                            oppent2 = piece;
-                            oppentP2.set(false);
 
-                        }
+
+            }
+            if (this.row + value2 > -1 && this.row + value2 < 8) {
+                currentSpotChecking2 = this.board[row + value2][col];
+                for (Piece piece : this.getAllPiecesOnBoard()) {
+                    if (piece.location.equals(currentSpotChecking2)) {
+                        noPieceInWay2 = false;
                     }
                 }
-                if (moveOne.get() && oppentNorthWest.get()) {
-                    this.availableLocation.add(this.board[row + value][col]);
-                    this.availableLocation.add(this.board[row + value2][col]);
-                }
-                if (!oppentNorthWest.get() && moveOne.get()) {
-                    this.canAttack.put(this.board[row + value][col + value], oppent);
-                    this.availableLocation.add(this.board[row + value][col + value]);
-                    moveOne.set(false);
-                }
 
-                if (!oppentP2.get() && moveTwo.get()) {
-                    this.canAttack.put(this.board[row + 1][col - 1], oppent2);
-                    this.availableLocation.add(this.board[row + 1][col - 1]);
+            }
 
-                    if (this.color.equals("black")) {
-                        this.availableLocation.add(this.board[row + 1][col - 1]);
-                    } else if (this.color.equals("white")) {
-                        this.availableLocation.add(this.board[row - 1][col + 1]);
-                        moveTwo.set(false);
+            // This is check if there is a white peice in the location
 
-                    }
-                }
-                this.checkPieces();
-                System.out.println();
-            } catch (IndexOutOfBoundsException e) {
-                System.out.println();
+            if (noPieceInWay1) {
+                this.availableLocation.add(currentSpotChecking);
+                noPieceInWay1 = true;
+            }
+            if (noPieceInWay2) {
+                noPieceInWay2 = true;
+                this.availableLocation.add(currentSpotChecking2);
+
             }
 
         }
+        // if the turn is not equal to zero
+        else {
+            if (this.row + value > -1 && this.row + value < 8) {
+                currentSpotChecking = this.board[row + value][col];
+
+                for (Piece piece : getAllPiecesOnBoard()) {
+                    if (piece.location.equals(currentSpotChecking)) {
+                        noPieceInWay1 = false;
+                    }
+                }
+
+                if (noPieceInWay1) {
+                    this.availableLocation.add(currentSpotChecking);
+                    noPieceInWay1 = true;
+                }
+
+
+            }
+
+
+        }
+
+
+        if (this.color.equals("black")) {
+            if (this.row + 1 > -1 && this.row + 1 < 8 && this.col + 1 > -1 && this.col + 1 < 8) {
+                currentSpotChecking = this.board[row + 1][col + 1];
+                for (Piece piece : oppentList) {
+
+                    // this means that there is a piece on that location
+                    if (piece.location.equals(currentSpotChecking)) {
+                        this.availableLocation.add(currentSpotChecking);
+
+                    }
+
+                }
+
+            }
+            if (this.row + 1 > -1 && this.row + 1 < 8 && this.col - 1 > -1 && this.col - 1 < 8) {
+                currentSpotChecking2 = this.board[row + 1][col - 1];
+                for (Piece piece : oppentList) {
+
+                    // this means that there is a piece on that location
+
+                    if (piece.location.equals(currentSpotChecking2)) {
+                        this.availableLocation.add(currentSpotChecking2);
+
+                    }
+                }
+            }
+        } else if (this.color.equals("white")) {
+
+            if (this.row - 1 > -1 && this.row - 1 < 8 && this.col + 1 > -1 && this.col + 1 < 8) {
+                currentSpotChecking2 = this.board[row - 1][col + 1];
+                for (Piece piece : oppentList) {
+
+                    // this means that there is a piece on that location
+
+                    if (piece.location.equals(currentSpotChecking2)) {
+                        this.availableLocation.add(currentSpotChecking2);
+
+                    }
+                }
+
+            }
+
+            if (this.row - 1 > -1 && this.row - 1 < 8 && this.col - 1 > -1 && this.col - 1 < 8) {
+                currentSpotChecking = this.board[row - 1][col - 1];
+                for (Piece piece : oppentList) {
+
+                    // this means that there is a piece on that location
+                    if (piece.location.equals(currentSpotChecking)) {
+                        this.availableLocation.add(currentSpotChecking);
+
+                    }
+
+                }
+            }
+
+
+        }
+
+
+
+        this.checkPieces();
+        System.out.println();
+
+
+    }
+
+
+
+    public Piece pawnToQueen() {
+        if (this.color.equals("white")) {
+            if (this.whiteToBeQueen.contains(this.location)) {
+                Queen q = new Queen("queen", this.color, this.location);
+                return q;
+
+            } else return this;
+        } else if (this.color.equals("black")) {
+            if (this.blackToBeQueen.contains(this.location)) {
+                Queen q = new Queen("queen", this.color, this.location);
+                return q;
+            } else return this;
+        }
+        return this;
+
+    }
 
 
 }

@@ -24,6 +24,7 @@ public abstract class Piece extends MouseAdapter {
     static List<Piece> blackPiecesOnBoard;
     static List<Piece> whitePiecesOnBoard;
     Map<String,Piece> canAttack;
+    List<String> routeToCheck;
 
 
 
@@ -41,6 +42,8 @@ public abstract class Piece extends MouseAdapter {
         blackPiecesOnBoard = new ArrayList<>();
         whitePiecesOnBoard = new ArrayList<>();
         this.canAttack = new HashMap<>();
+        this.turn = 0;
+        this.routeToCheck = new ArrayList<>();
     }
 
 
@@ -219,6 +222,7 @@ public abstract class Piece extends MouseAdapter {
     public void move(String key) {
         int pos1 = this.location.charAt(0);
         this.location = key;
+        this.turn++;
         setIndex ();
         int pos2 = this.location.charAt(0);
 
@@ -305,6 +309,7 @@ public abstract class Piece extends MouseAdapter {
     }
 
 
+
     public Rectangle getBounds() {
         return new Rectangle (x , y, 75, 75);
 
@@ -378,5 +383,18 @@ public abstract class Piece extends MouseAdapter {
         }
     }
 
+    public boolean checkHasOccured(King king){
+        this.availableMoves();
+        if (this.availableLocation.contains(king.location)){
+            return true;
+        }
+        else return false;
+    }
+
+    public List<Piece> checkHasOccuredList(Piece piece){
+       return null;
+    }
+
+    public abstract void findRoute();
 
 }

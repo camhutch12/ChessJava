@@ -54,8 +54,7 @@ public class Bishop extends Piece {
 
         // checks if moves will be valid for all 4 diagnol quardants
         for (int i = 1; i < this.getBoard().length; i++) {
-if (this.location == "d5")
-    System.out.println();
+
             currentSpotChecking1 = null;
             currentSpotChecking2 = null;
             currentSpotChecking3 = null;
@@ -444,6 +443,11 @@ if (this.location == "d5")
     public void setupImage(String file) {
         this.file = this.color.equals("white") ? "white-bishop.png" : "black-bishop.png";
         loadImage(this.file);
+    }
+
+    @Override
+    public void findRoute(King king, String locationForKing) {
+
     }
 
 

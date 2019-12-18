@@ -51,16 +51,19 @@ public class Pawn extends Piece {
     }
 
     @Override
-    public void findRoute() {
-        if (this.color.equals("white")) {
-            //helperFindRoute();
+    public void findRoute(King king, String locationForKing) {
+        this.routeToCheck.clear();
 
+
+        if (this.color.equals("white")) {
+           helperFindRoute(king.location,Piece.allPiecesOnBoard,king);
         } else if (this.color.equals("black")) {
+           helperFindRoute(king.location,Piece.allPiecesOnBoard,king);
 
         }
     }
 
-    public void helperFindRoute(String location, List<Piece> oppentList){
+    public void helperFindRoute(String location, List<Piece> oppentList, King king){
         int row = this.row;
         int col = this.col;
         Piece oppent = null;
@@ -85,11 +88,18 @@ public class Pawn extends Piece {
                     // this means that there is a piece on that location
                     if (piece.location.equals(currentSpotChecking)) {
                         this.routeToCheck.add(currentSpotChecking);
-
+                        break;
                     }
 
                 }
 
+            }
+
+            if (this.routeToCheck.contains(king.location)){
+                return;
+            }
+            else {
+                this.routeToCheck.clear();
             }
             if (this.row + 1 > -1 && this.row + 1 < 8 && this.col - 1 > -1 && this.col - 1 < 8) {
                 currentSpotChecking2 = this.board[row + 1][col - 1];
@@ -99,10 +109,20 @@ public class Pawn extends Piece {
 
                     if (piece.location.equals(currentSpotChecking2)) {
                         this.routeToCheck.add(currentSpotChecking2);
+                        break;
 
                     }
                 }
             }
+
+
+            if (this.routeToCheck.contains(king.location)){
+                return;
+            }
+            else {
+                this.routeToCheck.clear();
+            }
+
         } else if (this.color.equals("white")) {
 
             if (this.row - 1 > -1 && this.row - 1 < 8 && this.col + 1 > -1 && this.col + 1 < 8) {
@@ -113,12 +133,17 @@ public class Pawn extends Piece {
 
                     if (piece.location.equals(currentSpotChecking2)) {
                         this.routeToCheck.add(currentSpotChecking2);
-
+                        break;
                     }
                 }
 
             }
-
+            if (this.routeToCheck.contains(king.location)){
+                return;
+            }
+            else {
+                this.routeToCheck.clear();
+            }
             if (this.row - 1 > -1 && this.row - 1 < 8 && this.col - 1 > -1 && this.col - 1 < 8) {
                 currentSpotChecking = this.board[row - 1][col - 1];
                 for (Piece piece : oppentList) {
@@ -126,11 +151,17 @@ public class Pawn extends Piece {
                     // this means that there is a piece on that location
                     if (piece.location.equals(currentSpotChecking)) {
                         this.routeToCheck.add(currentSpotChecking);
+                        break;
                     }
 
                 }
             }
-
+            if (this.routeToCheck.contains(king.location)){
+                return;
+            }
+            else {
+                this.routeToCheck.clear();
+            }
 
         }
 

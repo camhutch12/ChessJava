@@ -395,6 +395,6 @@ public abstract class Piece extends MouseAdapter {
        return null;
     }
 
-    public abstract void findRoute();
+    public abstract void findRoute(King king, String locationForKing);
 
 }

@@ -13,6 +13,7 @@ public abstract class Piece extends MouseAdapter {
     int x, y;
     int dy, dx;
     int width, height;
+    int turn;
     String file;
     String color;
     String name;
@@ -23,6 +24,7 @@ public abstract class Piece extends MouseAdapter {
     static List<Piece> blackPiecesOnBoard;
     static List<Piece> whitePiecesOnBoard;
     Map<String,Piece> canAttack;
+    List<String> routeToCheck;
 
 
 
@@ -39,6 +41,8 @@ public abstract class Piece extends MouseAdapter {
         blackPiecesOnBoard = new ArrayList<>();
         whitePiecesOnBoard = new ArrayList<>();
         this.canAttack = new HashMap<>();
+        this.turn = 0;
+        this.routeToCheck = new ArrayList<>();
     }
 
 
@@ -216,6 +220,7 @@ public abstract class Piece extends MouseAdapter {
 
     public void move(String key) {
         this.location = key;
+        this.turn++;
         setIndex ();
 
 
@@ -235,6 +240,7 @@ public abstract class Piece extends MouseAdapter {
 
         System.out.println ("Hii");
     }
+
 
 
     public Rectangle getBounds() {
@@ -310,5 +316,18 @@ public abstract class Piece extends MouseAdapter {
         }
     }
 
+    public boolean checkHasOccured(King king){
+        this.availableMoves();
+        if (this.availableLocation.contains(king.location)){
+            return true;
+        }
+        else return false;
+    }
+
+    public List<Piece> checkHasOccuredList(Piece piece){
+       return null;
+    }
+
+    public abstract void findRoute();
 
 }

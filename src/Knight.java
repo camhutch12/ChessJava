@@ -160,17 +160,6 @@ public class Knight extends Piece {
 
                 }
 
-
-
-
-
-
-
-
-
-
-
-
                 //this.availableLocation.add(this.board[row+1][col-2]);
 
             }

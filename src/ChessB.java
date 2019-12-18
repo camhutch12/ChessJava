@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -26,6 +25,9 @@ public class ChessB extends JPanel implements ActionListener {
     Piece selectedPiece;
     java.util.List<Rectangle> shadedTiles = new ArrayList<>();
     private String selectedPiece_loc;
+    boolean playersTurn = true;
+    String player1;
+    String player2;
 
 
     java.util.List<Piece> whitePiecesOnBoard;
@@ -40,6 +42,7 @@ public class ChessB extends JPanel implements ActionListener {
             {"a3", "b3", "c3", "d3", "e3", "f3", "g3", "h3"},
             {"a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2"},
             {"a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"}};
+    private boolean moveOccured;
 
 
     public ChessB() {
@@ -95,6 +98,10 @@ public class ChessB extends JPanel implements ActionListener {
         setUpIndex();
         this.setupPiecesLists();
 
+        for (Piece piece1 : this.pawnArray) {
+            ((Pawn) piece1).setupForPawnToQueenLists();
+        }
+
 
     }
 
@@ -142,6 +149,7 @@ public class ChessB extends JPanel implements ActionListener {
 
 
     }
+
     // does is sets up the index of where a location will be
     // both there rows and columns
     private void setUpIndex() {
@@ -171,8 +179,6 @@ public class ChessB extends JPanel implements ActionListener {
     }
 
 
-
-
     // this is function create two seperate list
     // one for the blackChess pieces
     // one for the whiteChess pieces
@@ -198,13 +204,13 @@ public class ChessB extends JPanel implements ActionListener {
         double startposX = 0;
         double startposY = 0;
         double heightPerSqaure = w / 8;
-       // System.out.println(heightPerSqaure);
+        // System.out.println(heightPerSqaure);
         double widthPerSqaure = h / 8;
         double middleWidth = widthPerSqaure / 2;
         //System.out.println(middleWidth);
-       // System.out.println(widthPerSqaure);
+        // System.out.println(widthPerSqaure);
         double middleHeight = middleWidth;
-       // System.out.println(middleHeight + " is ");
+        // System.out.println(middleHeight + " is ");
         int count1 = 0;
 
 
@@ -213,7 +219,7 @@ public class ChessB extends JPanel implements ActionListener {
             for (int j = 0; j < 8; j++) {
 
                 Rectangle rectangle = new Rectangle((int) startposX, (int) startposY, (int) widthPerSqaure, (int) heightPerSqaure);
-              //  System.out.println(rectangle);
+                //  System.out.println(rectangle);
                 cords[count1][count2] = rectangle;
                 //Pair<Double, Double> points = new Pair (middleWidth, middleHeight);
                 Pair<Double, Double> points;
@@ -340,12 +346,11 @@ public class ChessB extends JPanel implements ActionListener {
         }
         for (int i = 0; i < this.black_pieces.size(); i++)
             g2g.drawImage(this.black_pieces.get(i).getImage(), this.black_pieces.get(i).x, this.black_pieces.get(i).y, this);
-         //   System.out.println(this.whitePieces.get(i).getX() + " y:" + this.whitePieces.get(i).y);
+        //   System.out.println(this.whitePieces.get(i).getX() + " y:" + this.whitePieces.get(i).y);
         for (int i = 0; i < this.whitePieces.size(); i++) {
 
             g2g.drawImage(this.whitePieces.get(i).getImage(), this.whitePieces.get(i).x, this.whitePieces.get(i).y, this);
         }
-
 
 
     }
@@ -375,7 +380,6 @@ public class ChessB extends JPanel implements ActionListener {
     }
 
 
-
     private void selectedPieceMove(Piece selectedPiece, Rectangle rectangle) {
         Piece piece = selectedPiece;
         String key = this.keys(this.mapLocationToCords, rectangle).findFirst().get();
@@ -393,6 +397,7 @@ public class ChessB extends JPanel implements ActionListener {
                 piece.location = key;
                 piece.setX((int) rectangle.getX());
                 piece.setY((int) rectangle.getY());
+                this.moveOccured = true;
                 piece.move(key);
 
             } else {
@@ -403,56 +408,173 @@ public class ChessB extends JPanel implements ActionListener {
                 piece.location = key;
                 piece.setX((int) rectangle.getX());
                 piece.setY((int) rectangle.getY());
+                this.moveOccured = true;
                 piece.move(key);
 
                 if (piece.checkCollision(otherPiece)) {
                     System.out.println("Need to remove other peice");
                     Piece.allPiecesOnBoard.remove(otherPiece);
                     this.allPiecesOnBoard.remove(otherPiece);
-                    if (otherPiece.color.equals("black")){
+                    if (otherPiece.color.equals("black")) {
                         Piece.blackPiecesOnBoard.remove(otherPiece);
                         this.blackPiecesOnBoard.remove(otherPiece);
-                    }
-                    else if (otherPiece.color.equals("white")) {
+                    } else if (otherPiece.color.equals("white")) {
                         Piece.whitePiecesOnBoard.remove(otherPiece);
                         this.whitePiecesOnBoard.remove(otherPiece);
 
 
                     }
-               //     System.out.println(otherPiece.getClass());
-               //     System.out.println(otherPiece.getClass().isInstance("Pawn"));
-                    if (otherPiece instanceof Pawn){
-                        this.pawnArray.remove(otherPiece);
+                    //     System.out.println(otherPiece.getClass());
+                    //     System.out.println(otherPiece.getClass().isInstance("Pawn"));
+                    removePawn(otherPiece);
+
+
+                    if (otherPiece.color.equals("white")) {
+                        this.whitePieces.remove(otherPiece);
                         this.shadedTiles.clear();
-                    }
-                    else {
-                        if (otherPiece.color.equals("white")){
-                            this.whitePieces.remove(otherPiece);
-                        }
-                        else if (otherPiece.color.equals("black")){
-                            this.black_pieces.remove(otherPiece);
-                        }
+                    } else if (otherPiece.color.equals("black")) {
+                        this.black_pieces.remove(otherPiece);
+                        this.shadedTiles.clear();
                     }
 
                     repaint();
 
-
-
-
-                }
-                else {
+                } else {
                     piece.location = oldLocation;
                     piece.setX(oldX);
                     piece.setY(oldY);
+                    this.moveOccured = false;
                     piece.move(oldLocation);
                 }
 
+            }
+
+
+        }
+
+        checkConditions(piece);
+
+
+    }
+
+    private void removePawn(Piece otherPiece) {
+        if (otherPiece instanceof Pawn) {
+            this.pawnArray.remove(otherPiece);
+            this.allPiecesOnBoard.remove(otherPiece);
+            this.shadedTiles.clear();
+        }
+    }
+
+    private void checkConditions(Piece piece) {
+
+        King blackKing = null;
+        King whiteKing = null;
+
+        for (Piece p : this.allPiecesOnBoard) {
+            if (p.name.equals("king") && p.color.equals("black")) {
+                blackKing = ((King) p);
+            } else if (p.name.equals("king") && p.color.equals("white")) {
+                whiteKing = ((King) p);
+            }
+        }
+
+        if (piece.color.equals("white")) {
+            if (blackKing != null) {
+                if (piece.checkHasOccured(blackKing)) {
+
+                    //TODO implement red high between attacker and king
+
+
+
+                }
+            }
+
+
+        }
+
+        else if (piece.color.equals("black")){
+            if (whiteKing != null) {
+                if (piece.checkHasOccured(whiteKing)) {
+                    //TODO implement red hightbetween attacker and king
+
+                }
+            }
+        }
+
+
+
+        if (piece instanceof Pawn) {
+            // this is for changing a Pawn to a queen
+            if (pawnToQueen(piece)) {
+
+                String newLocation = piece.location;
+                int newX = piece.x;
+                int newY = piece.y;
+                int newRow = piece.row;
+                int newCol = piece.col;
+                //TODO
+                Queen newQ = new Queen("queen", piece.color, piece.location);
+                newQ.setX(newX);
+                newQ.setY(newY);
+                newQ.setRow(newRow);
+                newQ.setCol(newCol);
+                newQ.setLocation(newLocation);
+                newQ.setBoard(this.board_locations);
+                removePawn(piece);
+                this.allPiecesOnBoard.add(newQ);
+                if (newQ.color.equals("black")) {
+                    this.black_pieces.add(newQ);
+
+                } else if (newQ.color.equals("white")) {
+                    this.whitePieces.add(newQ);
+                }
 
 
             }
-        } else return;
 
 
+        }
+    }
+
+
+    private void shadeTilesRed (Piece clickedPiece, int posX, int posY) {
+        this.shadedTiles.clear();
+        if (clickedPiece != null) {
+            System.out.println(clickedPiece);
+            this.selectedPiece = clickedPiece;
+            this.selectedPiece_loc = clickedPiece.location;
+            clickedPiece.availableMoves();
+            java.util.List<String> available_moves = clickedPiece.availableLocation;
+
+            if (available_moves != null) {
+                for (String s : available_moves) {
+                    Rectangle rec = mapLocationToCords.get(s);
+//                    System.out.println("rec min in" + rec.getMinX() + "," + rec.getMinY());
+//                    System.out.println("rec max in" + rec.getMaxX() + "," + rec.getMaxY());
+                    this.shadedTiles.add(rec);
+
+                }
+                System.out.println(available_moves.toString());
+            }
+
+        }
+    }
+
+
+
+    private boolean pawnToQueen(Piece piece) {
+        if (piece.color.equals("black")) {
+            if (((Pawn) piece).getBlackToBeQueen().contains(piece.location)) {
+                return true;
+            }
+            return false;
+        } else if (piece.color.equals("white")) {
+            if (((Pawn) piece).getWhiteToBeQueen().contains(piece.location)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private Piece getPiece(String key) {
@@ -500,75 +622,210 @@ public class ChessB extends JPanel implements ActionListener {
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            Rectangle tile = null;
-            Point newE = e.getPoint();
-            newE.y += 0;
-            for (Rectangle[] rec : cords) {
-                if (tile != null) {
-                    break;
-                }
-                for (Rectangle r : rec) {
-                    //     System.out.println(r.getBounds());
-                    if (r.contains(newE.getLocation())) {
-//                        System.out.println(e.getPoint());
-//                        System.out.println(newE.getLocation());
-//                        System.out.println ("True");
-
-                        tile = r;
-//                        System.out.println(tile.getMinX() + " min y " + tile.getMinY());
-//                        System.out.println(tile.getMaxX() + " Max y " + tile.getMaxY());
-                        break;
-                    }
-                }
-            }
-            if (mapLocationToCords.containsValue(tile)) {
-                Stream<String> key = keys(mapLocationToCords, tile);
-                String loc = key.findFirst().get();
-                System.out.println(loc);
-                Piece clickedPiece = null;
-                for (Piece p : allPiecesOnBoard) {
-                    if (loc.compareTo(p.location) == 0) {
-                        clickedPiece = p;
-//                        System.out.println ("print true");
-                        break;
-
-                    }
-                }
-
-                if (clickedPiece != null) {
-                    int posX = clickedPiece.row;
-                    int posY = clickedPiece.col;
-
-                    if (selectedPiece_loc != null) {
-
-                        selectedPieceMove(selectedPiece, tile);
-                        selectedPiece_loc = null;
-
-                    }
-
-                    shadeTiles(clickedPiece, posX, posY);
-                    repaint();
+//            if (playersTurn){
+//                //TODO
+//                gameLogic(e);
+//
+//            }
+//            else {
+//                gameLogic(e);
+//            }
+            testingLogic(e);
 
 
-                } else if (selectedPiece_loc != null) {
-                    shadedTiles.clear();
-                    selectedPieceMove(selectedPiece, tile);
-                    selectedPiece_loc = null;
-
-                    repaint();
-
-                }
-
-            }
         }
 
     }
 
-    private void playGame(){
+
+    private void testingLogic(MouseEvent e) {
+        Rectangle tile = null;
+        Point newE = e.getPoint();
+        newE.y += 0;
+        for (Rectangle[] rec : cords) {
+            if (tile != null) {
+                break;
+            }
+            for (Rectangle r : rec) {
+                //     System.out.println(r.getBounds());
+                if (r.contains(newE.getLocation())) {
+//                        System.out.println(e.getPoint());
+//                        System.out.println(newE.getLocation());
+//                        System.out.println ("True");
+
+                    tile = r;
+//                        System.out.println(tile.getMinX() + " min y " + tile.getMinY());
+//                        System.out.println(tile.getMaxX() + " Max y " + tile.getMaxY());
+                    break;
+                }
+            }
+        }
+        if (mapLocationToCords.containsValue(tile)) {
+            Stream<String> key = keys(mapLocationToCords, tile);
+            String loc = key.findFirst().get();
+            System.out.println(loc);
+            Piece clickedPiece = null;
+            for (Piece p : allPiecesOnBoard) {
+                if (loc.compareTo(p.location) == 0) {
+                    clickedPiece = p;
+//                        System.out.println ("print true");
+                    break;
+
+                }
+            }
+            // if playersTurn is true it is player1 turn
+            // other wise it is player2 turn
+
+
+            testingMainPlayerLogic(clickedPiece, tile);
+
+
+        }
+
+
+    }
+
+    private void playGame() {
         String player1 = "white";
         String player2 = "black";
         boolean isCheckMate = false;
-        while (!isCheckMate){
+        while (!isCheckMate) {
+
+        }
+    }
+
+    private void gameLogic(MouseEvent e) {
+        Rectangle tile = null;
+        Point newE = e.getPoint();
+        newE.y += 0;
+        for (Rectangle[] rec : cords) {
+            if (tile != null) {
+                break;
+            }
+            for (Rectangle r : rec) {
+                //     System.out.println(r.getBounds());
+                if (r.contains(newE.getLocation())) {
+//                        System.out.println(e.getPoint());
+//                        System.out.println(newE.getLocation());
+//                        System.out.println ("True");
+
+                    tile = r;
+//                        System.out.println(tile.getMinX() + " min y " + tile.getMinY());
+//                        System.out.println(tile.getMaxX() + " Max y " + tile.getMaxY());
+                    break;
+                }
+            }
+        }
+        if (mapLocationToCords.containsValue(tile)) {
+            Stream<String> key = keys(mapLocationToCords, tile);
+            String loc = key.findFirst().get();
+            System.out.println(loc);
+            Piece clickedPiece = null;
+            for (Piece p : allPiecesOnBoard) {
+                if (loc.compareTo(p.location) == 0) {
+                    clickedPiece = p;
+//                        System.out.println ("print true");
+                    break;
+
+                }
+            }
+            // if playersTurn is true it is player1 turn
+            // other wise it is player2 turn
+
+            if (playersTurn) {
+                mainPlayerLogic(clickedPiece, tile);
+                if (moveOccured) {
+                    playersTurn = false;
+                    this.moveOccured = false;
+
+                }
+
+
+            } else if (!playersTurn) {
+                mainPlayerLogic(clickedPiece, tile);
+                if (moveOccured) {
+                    playersTurn = true;
+                    this.moveOccured = false;
+
+                }
+            }
+
+
+        }
+    }
+
+    private void mainPlayerLogic(Piece clickedPiece, Rectangle tile) {
+        if (clickedPiece != null) {
+            if (playersTurn && clickedPiece.color.equals("white")) {
+
+                int posX = clickedPiece.row;
+                int posY = clickedPiece.col;
+
+                if (selectedPiece_loc != null) {
+
+                    selectedPieceMove(selectedPiece, tile);
+                    selectedPiece_loc = null;
+
+                }
+                shadeTiles(clickedPiece, posX, posY);
+            } else if (!playersTurn && clickedPiece.color.equals("black")) {
+
+                int posX = clickedPiece.row;
+                int posY = clickedPiece.col;
+
+                if (selectedPiece_loc != null) {
+
+                    selectedPieceMove(selectedPiece, tile);
+                    selectedPiece_loc = null;
+
+                }
+                shadeTiles(clickedPiece, posX, posY);
+            }
+
+
+            repaint();
+
+
+        } else if (selectedPiece_loc != null) {
+            if (selectedPiece.color.equals("white") && playersTurn) {
+                shadedTiles.clear();
+                selectedPieceMove(selectedPiece, tile);
+                selectedPiece_loc = null;
+            } else if (selectedPiece.color.equals("black") && (!playersTurn)) {
+                shadedTiles.clear();
+                selectedPieceMove(selectedPiece, tile);
+                selectedPiece_loc = null;
+            }
+
+
+            repaint();
+
+        }
+    }
+
+
+    private void testingMainPlayerLogic(Piece clickedPiece, Rectangle tile) {
+        if (clickedPiece != null) {
+            int posX = clickedPiece.row;
+            int posY = clickedPiece.col;
+
+            if (selectedPiece_loc != null) {
+
+                selectedPieceMove(selectedPiece, tile);
+                selectedPiece_loc = null;
+
+            }
+            shadeTiles(clickedPiece, posX, posY);
+            repaint();
+
+
+        } else {
+
+
+            shadedTiles.clear();
+            selectedPieceMove(selectedPiece, tile);
+            selectedPiece_loc = null;
+            repaint();
 
         }
     }

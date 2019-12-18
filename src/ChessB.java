@@ -1,12 +1,11 @@
 import javax.swing.*;
-import javax.swing.event.ListDataListener;
 import java.awt.*;
 import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.*;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -533,6 +532,7 @@ public class ChessB extends JPanel implements ActionListener {
         }
 
 
+
     }
 
     private void swapColor(Graphics2D g) {
@@ -560,6 +560,7 @@ public class ChessB extends JPanel implements ActionListener {
     }
 
 
+
     private void selectedPieceMove(Piece selectedPiece, Rectangle rectangle) {
         Piece piece = selectedPiece;
         String key = this.keys(this.mapLocationToCords, rectangle).findFirst().get();
@@ -578,7 +579,100 @@ public class ChessB extends JPanel implements ActionListener {
                 piece.setX((int) rectangle.getX());
                 piece.setY((int) rectangle.getY());
                 this.moveOccured = true;
+                this.moveOccured = true;
+                int dis = piece.location.charAt(0);
                 piece.move(key);
+
+                int dis2 = piece.location.charAt(0);
+
+                int horiDis = dis - dis2;
+
+                String nam = String.valueOf(Arrays.copyOf(piece.name.toCharArray(), 4));
+
+                if (nam.equals("Pawn")  && Math.abs(horiDis) == 1){
+                    if(piece.color.equals("white") ){
+                        char[] r = new char[2];
+                        r[0] = piece.location.charAt(0);
+                        int secPos = Integer.parseInt(String.valueOf(piece.location.charAt(1))) -1;
+                        String strSecPos = Integer.toString(secPos);
+                        r[1] = strSecPos.charAt(0);
+                        System.out.println("r = "+String.valueOf(r));
+
+                        Piece enemy = null;
+
+                        for(Piece find : allPiecesOnBoard) {
+
+                            String en = String.valueOf(Arrays.copyOf(find.name.toCharArray(), 4));
+
+                            if(en.equals("Pawn") && find.location.equals(String.valueOf(r))) {
+
+                                enemy = find;
+                                break;
+                            }
+                        }
+
+                        System.out.println("Need to remove other peice");
+                        Piece.allPiecesOnBoard.remove(enemy);
+                        this.allPiecesOnBoard.remove(enemy);
+
+                        Piece.blackPiecesOnBoard.remove(enemy);
+                        this.blackPiecesOnBoard.remove(enemy);
+
+                        //     System.out.println(otherPiece.getClass());
+                        //     System.out.println(otherPiece.getClass().isInstance("Pawn"));
+                        removePawn(enemy);
+
+                        this.black_pieces.remove(enemy);
+                        this.shadedTiles.clear();
+
+
+                        repaint();
+
+
+
+                    }
+                    if(piece.color.equals("black")){
+                        char[] r = new char[2];
+                        r[0] = piece.location.charAt(0);
+                        int secPos = Integer.parseInt(String.valueOf(piece.location.charAt(1))) +1;
+                        String strSecPos = Integer.toString(secPos);
+                        r[1] = strSecPos.charAt(0);
+                        System.out.println("r = "+String.valueOf(r));
+
+                        Piece enemy = null;
+
+                        for(Piece find : allPiecesOnBoard) {
+
+                            String en = String.valueOf(Arrays.copyOf(find.name.toCharArray(), 4));
+
+                            if(en.equals("Pawn") && find.location.equals(String.valueOf(r))) {
+
+                                enemy = find;
+                                break;
+                            }
+                        }
+
+                        System.out.println("Need to remove other peice");
+                        Piece.allPiecesOnBoard.remove(enemy);
+                        this.allPiecesOnBoard.remove(enemy);
+
+                        Piece.blackPiecesOnBoard.remove(enemy);
+                        this.blackPiecesOnBoard.remove(enemy);
+
+                        //     System.out.println(otherPiece.getClass());
+                        //     System.out.println(otherPiece.getClass().isInstance("Pawn"));
+                        removePawn(enemy);
+
+                        this.black_pieces.remove(enemy);
+                        this.shadedTiles.clear();
+
+
+                        repaint();
+
+
+
+                    }
+                }
 
             } else {
                 String oldLocation = piece.location;

@@ -5,6 +5,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Stream;
@@ -30,11 +34,13 @@ public class ChessB extends JPanel implements ActionListener {
     String player1;
     String player2;
     boolean startGame = false;
+    boolean playerIsInCheck = false;
     Button btn;
     Button btn2;
     Button btn3;
     boolean playerPreferanceClicked = false;
     Map<String,String> loadState;
+    java.util.List<String> goodList = new ArrayList<>();
 
 
     java.util.List<Piece> whitePiecesOnBoard;
@@ -179,7 +185,7 @@ public class ChessB extends JPanel implements ActionListener {
     }
 
 
-    private void saveFile(Map<String,String> locationsStates) throws IOException{
+    private void saveFile(Map<String,String> locationsStates) throws IOException {
         try(FileWriter pieceAndLocations = new FileWriter("testFiles.txt");){
 
         }
@@ -579,9 +585,9 @@ public class ChessB extends JPanel implements ActionListener {
                 piece.setX((int) rectangle.getX());
                 piece.setY((int) rectangle.getY());
                 this.moveOccured = true;
-                this.moveOccured = true;
                 int dis = piece.location.charAt(0);
                 piece.move(key);
+                checkConditions(piece);
 
                 int dis2 = piece.location.charAt(0);
 
@@ -674,16 +680,16 @@ public class ChessB extends JPanel implements ActionListener {
                     }
                 }
 
-            } else {
+            }
+            else {
                 String oldLocation = piece.location;
                 int oldX = piece.getX();
                 int oldY = piece.getY();
-
-
                 piece.setX((int) rectangle.getX());
                 piece.setY((int) rectangle.getY());
                 this.moveOccured = true;
                 piece.move(key);
+                checkConditions(piece);
 
                 if (piece.checkCollision(otherPiece)) {
                     System.out.println("Need to remove other peice");
@@ -719,6 +725,7 @@ public class ChessB extends JPanel implements ActionListener {
                     piece.setY(oldY);
                     this.moveOccured = false;
                     piece.move(oldLocation);
+
                 }
 
             }
@@ -726,7 +733,7 @@ public class ChessB extends JPanel implements ActionListener {
 
         }
 
-        checkConditions(piece);
+
 
 
     }
@@ -755,11 +762,14 @@ public class ChessB extends JPanel implements ActionListener {
         if (piece.color.equals("white")) {
             if (blackKing != null) {
                 if (piece.checkHasOccured(blackKing)) {
-
-
+                    System.out.println("Check has occured");
+                    this.playerIsInCheck = true;
                     shadeTilesRed(blackKing, blackKing.getX(), blackKing.getY());
                     repaint();
 
+                }
+                else {
+                    this.playerIsInCheck = false;
                 }
             }
 
@@ -767,9 +777,13 @@ public class ChessB extends JPanel implements ActionListener {
         } else if (piece.color.equals("black")) {
             if (whiteKing != null) {
                 if (piece.checkHasOccured(whiteKing)) {
+                    playerIsInCheck = true;
                     shadeTilesRed(whiteKing, whiteKing.getX(), whiteKing.getY());
                     repaint();
 
+                }
+                else {
+                    this.playerIsInCheck = false;
                 }
             }
         }
@@ -810,11 +824,11 @@ public class ChessB extends JPanel implements ActionListener {
 
 
     private void shadeTilesRed(Piece clickedPiece, int posX, int posY) {
-
+        this.shadedTiles.add(clickedPiece.getBounds());
         if (clickedPiece != null) {
             System.out.println(clickedPiece);
-            this.selectedPiece = clickedPiece;
-            this.selectedPiece_loc = clickedPiece.location;
+//            this.selectedPiece = clickedPiece;
+//            this.selectedPiece_loc = clickedPiece.location;
 
 
             if (this.inCheckTiles != null) {
@@ -822,7 +836,7 @@ public class ChessB extends JPanel implements ActionListener {
                 Rectangle rec = mapLocationToCords.get(clickedPiece.location);
 //                    System.out.println("rec min in" + rec.getMinX() + "," + rec.getMinY());
 //                    System.out.println("rec max in" + rec.getMaxX() + "," + rec.getMaxY());
-                this.shadedTiles.add(rec);
+
 
             }
 
@@ -892,15 +906,15 @@ public class ChessB extends JPanel implements ActionListener {
 
         @Override
         public void mouseClicked(MouseEvent e) {
-//            if (playersTurn){
-//                //TODO
-//                gameLogic(e);
-//
-//            }
-//            else {
-//                gameLogic(e);
-//            }
-            testingLogic(e);
+            if (playersTurn){
+                //TODO
+                gameLogic(e);
+
+            }
+            else {
+                gameLogic(e);
+            }
+            //testingLogic(e);
 
 
         }
@@ -1003,6 +1017,11 @@ public class ChessB extends JPanel implements ActionListener {
             // other wise it is player2 turn
 
             if (playersTurn) {
+
+                if (loc.equals("d7")){
+                    System.out.println();
+                }
+
                 mainPlayerLogic(clickedPiece, tile);
                 if (moveOccured) {
                     playersTurn = false;
@@ -1012,6 +1031,9 @@ public class ChessB extends JPanel implements ActionListener {
 
 
             } else if (!playersTurn) {
+                if (loc.equals("d7")){
+                    System.out.println();
+                }
                 mainPlayerLogic(clickedPiece, tile);
                 if (moveOccured) {
                     playersTurn = true;
@@ -1026,6 +1048,127 @@ public class ChessB extends JPanel implements ActionListener {
 
     private void mainPlayerLogic(Piece clickedPiece, Rectangle tile) {
         if (clickedPiece != null) {
+
+            if (playerIsInCheck && !playersTurn){
+
+                if (selectedPiece != null){
+                    clickedPiece.availableMoves();
+                    boolean works = false;
+                    for (String s : this.goodList) {
+                        if (selectedPiece.availableLocation.contains(s)){
+
+                            works = true;
+                        }
+                    }
+
+                    if (works){
+                        if (selectedPiece_loc != null){
+
+                            selectedPieceMove(selectedPiece, tile);
+                            selectedPiece_loc = null;
+                            goodList.clear();
+                            return;
+                        }
+                    }
+
+                }
+
+
+               // Map<Piece,String> goodMoves = new HashMap<>();
+                this.goodList.clear();
+                King king = null;
+                for (Piece piece1 : allPiecesOnBoard) {
+                    if (piece1.color.equals(clickedPiece.color) && piece1.name.equals("king")){
+                        king  =((King) piece1);
+                        king.isInCheck();
+                        System.out.println(king.whoCanKill);
+                        break;
+                    }
+                }
+
+                clickedPiece.availableMoves();
+                String currentLoc = clickedPiece.location;
+                for (String loc : clickedPiece.availableLocation) {
+                    //clickedPiece.move(loc);
+                    if (king != null) {
+                        if (clickedPiece.color.equals(king.color) && clickedPiece.name.equals(king.name)){
+
+                            for (Piece badPieces : king.whoCanKill) {
+                                for (String s : clickedPiece.availableLocation) {
+                                    if (s.equals(badPieces.location)){
+                                        goodList.add(s);
+                                    }
+                                }
+                            }
+
+                            System.out.println();
+                            break;
+                        }
+                        else {
+                            if (!(clickedPiece.checkHasOccured(king))) {
+                                goodList.add(clickedPiece.location);
+
+                            }
+                        }
+
+                    }
+                }
+
+                //goodList.remove(0);
+
+
+                shadeTiles(clickedPiece, clickedPiece.row, clickedPiece.col);
+
+
+            }
+
+            if (playerIsInCheck && playersTurn){
+
+                if (selectedPiece != null){
+                    selectedPiece.availableMoves();
+                    boolean works = false;
+                    for (String s : this.goodList) {
+                        if (selectedPiece.availableLocation.contains(s)){
+
+                            works = true;
+                        }
+                    }
+
+                    if (works){
+                        if (selectedPiece_loc != null){
+
+                            selectedPieceMove(selectedPiece, tile);
+                            selectedPiece_loc = null;
+                        }
+                    }
+
+                }
+
+
+                Map<Piece,String> goodMoves = new HashMap<>();
+                java.util.List<String> goodList = new ArrayList<>();
+                King king = null;
+                for (Piece piece1 : allPiecesOnBoard) {
+                    if (piece1.color.equals(clickedPiece.color) && piece1.name.equals("king")){
+                        king  =((King) piece1);
+                    }
+                }
+
+                clickedPiece.availableMoves();
+                String currentLoc = clickedPiece.location;
+                for (String loc : clickedPiece.availableLocation) {
+                    clickedPiece.move(loc);
+                    if (king != null) {
+                        if (!(clickedPiece.checkHasOccured(king))) {
+                            goodList.add(clickedPiece.location);
+
+                        }
+                    }
+                }
+                selectedPiece.move(currentLoc);
+                shadeTiles(selectedPiece, selectedPiece.row, selectedPiece.col);
+            }
+
             if (playersTurn && clickedPiece.color.equals("white")) {
 
                 int posX = clickedPiece.row;
@@ -1038,7 +1181,16 @@ public class ChessB extends JPanel implements ActionListener {
 
                 }
                 shadeTiles(clickedPiece, posX, posY);
-            } else if (!playersTurn && clickedPiece.color.equals("black")) {
+            }
+
+            else if ( !playerIsInCheck &&playersTurn && clickedPiece.color.equals("black") && selectedPiece != null && selectedPiece.color.equals("white") ){
+                shadedTiles.clear();
+                selectedPieceMove(selectedPiece, tile);
+                selectedPiece_loc = null;
+                repaint();
+            }
+
+            else if ( !playerIsInCheck &&!playersTurn && clickedPiece.color.equals("black")) {
 
                 int posX = clickedPiece.row;
                 int posY = clickedPiece.col;
@@ -1052,23 +1204,35 @@ public class ChessB extends JPanel implements ActionListener {
                 shadeTiles(clickedPiece, posX, posY);
             }
 
-
-            repaint();
-
-
-        } else if (selectedPiece_loc != null) {
-            if (selectedPiece.color.equals("white") && playersTurn) {
+            else if (!playersTurn && clickedPiece.color.equals("white") && selectedPiece != null && selectedPiece.color.equals("black") ){
                 shadedTiles.clear();
                 selectedPieceMove(selectedPiece, tile);
                 selectedPiece_loc = null;
-            } else if (selectedPiece.color.equals("black") && (!playersTurn)) {
-                shadedTiles.clear();
-                selectedPieceMove(selectedPiece, tile);
-                selectedPiece_loc = null;
+                repaint();
             }
 
 
             repaint();
+
+
+        }
+
+        else  {
+            if (selectedPiece.color.equals("white") && playersTurn) {
+                shadedTiles.clear();
+                selectedPieceMove(selectedPiece, tile);
+                selectedPiece_loc = null;
+                repaint();
+            }
+            else if (selectedPiece.color.equals("black") && (!playersTurn)) {
+                shadedTiles.clear();
+                selectedPieceMove(selectedPiece, tile);
+                selectedPiece_loc = null;
+                repaint();
+            }
+
+
+
 
         }
     }

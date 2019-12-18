@@ -477,7 +477,7 @@ public class King extends Piece {
     }
 
     public void isInCheck(){
-        List<Piece> whoCanKill = new ArrayList<>();
+
         if (this.color.equals("black")){
 
             for (Piece p :

@@ -25,6 +25,7 @@ public abstract class Piece extends MouseAdapter {
     static List<Piece> whitePiecesOnBoard;
     Map<String,Piece> canAttack;
     List<String> routeToCheck;
+    List<Piece> whoCanKill;
 
 
 
@@ -44,6 +45,7 @@ public abstract class Piece extends MouseAdapter {
         this.canAttack = new HashMap<>();
         this.turn = 0;
         this.routeToCheck = new ArrayList<>();
+        this.whoCanKill = new ArrayList<>();
     }
 
 
@@ -222,7 +224,6 @@ public abstract class Piece extends MouseAdapter {
     public void move(String key) {
         int pos1 = this.location.charAt(0);
         this.location = key;
-        this.turn++;
         setIndex ();
         int pos2 = this.location.charAt(0);
 
@@ -252,7 +253,7 @@ public abstract class Piece extends MouseAdapter {
                     rPos[1] = this.location.charAt(1);
                     newPos[1] = this.location.charAt(1);
                     String newP = String.valueOf(rPos);
-                    if(onB.name == "rook" && onB.location.equals(newP)){
+                    if(onB.name.equals("rook") && onB.location.equals(newP)){
                         int x1 = Constants.width/8;
                         int y1 = Constants.hieght/8;
                         //distances from 0,0 aka a1

@@ -3,7 +3,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class King extends Piece {
+
     @Override
+
     public void availableMoves() {
 
         this.availableLocation.clear();
@@ -84,7 +86,6 @@ public class King extends Piece {
                         northWest.set(false);
 
                     }
-
 
                 }
 
@@ -223,7 +224,7 @@ public class King extends Piece {
 
         try {
 
-            // checks if moves will be valid for north, south, east and west quardants1
+            // checks if moves will be valid for north, south, east and west quadrants
                 // check to the right
                 if (row > -1 && row < 8 && col + 1 > -1 && col + 1 < 8) {
                     if (west.get() && oppentWest.get()) {
@@ -234,8 +235,6 @@ public class King extends Piece {
                                 west.set(false);
                             }
                         }));
-
-
 
                     }
 
@@ -249,8 +248,6 @@ public class King extends Piece {
                             }
 
                         }
-
-
                     }
 
                     if (west.get() && oppentWest.get()) {
@@ -263,6 +260,40 @@ public class King extends Piece {
                         west.set(false);
 
                     }
+
+                    //Castling right
+                    if(oppentWest.get() && west.get() && turn == 0){
+                        currentSpotChecking = this.board[row][col + 2];
+                        String finalCurrentSpotChecking = currentSpotChecking;
+                        colorList.forEach((piece -> {
+                            if (piece.location.equals(finalCurrentSpotChecking)) {
+                                west.set(false);
+                            }
+                        }));
+                    }
+
+                    if (oppentWest.get() && west.get() && turn == 0) {
+                        currentSpotChecking = this.board[row][col + 2];
+                        String finalCurrentSpotChecking = currentSpotChecking;
+                        for (Piece piece : oppentList) {
+                            if (piece.location.equals(finalCurrentSpotChecking)) {
+                                oppent = piece;
+                                oppentWest.set(false);
+                            }
+
+                        }
+                    }
+
+                    if(oppentWest.get() && west.get() && turn == 0){
+                        currentSpotChecking = this.board[row][col + 3];
+                        String finalCurrentSpotChecking = currentSpotChecking;
+                        colorList.forEach((piece -> {
+                            if (piece.location.equals(finalCurrentSpotChecking) && piece.name.equals("rook") && piece.turn == 0) {
+                                this.availableLocation.add(this.board[row][col+2]);
+                            }
+                        }));
+                    }
+
                 }
 
                 // check to the left
@@ -307,6 +338,39 @@ public class King extends Piece {
 
                     }
 
+                    if(oppentEast.get() && east.get() && turn == 0){
+                        currentSpotChecking = this.board[row][col - 2];
+                        String finalCurrentSpotChecking = currentSpotChecking;
+                        colorList.forEach((piece -> {
+                            if (piece.location.equals(finalCurrentSpotChecking)) {
+                                west.set(false);
+                            }
+                        }));
+                    }
+
+                    if (oppentEast.get() && east.get() && turn == 0) {
+                        for(int i = (col-2); i > 0 ;i--) {
+                            currentSpotChecking = this.board[row][i];
+                            String finalCurrentSpotChecking = currentSpotChecking;
+                            for (Piece piece : oppentList) {
+                                if (piece.location.equals(finalCurrentSpotChecking)) {
+                                    oppent = piece;
+                                    oppentWest.set(false);
+                                }
+
+                            }
+                        }
+                    }
+
+                    if(oppentEast.get() && east.get() && turn == 0){
+                        currentSpotChecking = this.board[row][col - 4];
+                        String finalCurrentSpotChecking = currentSpotChecking;
+                        colorList.forEach((piece -> {
+                            if (piece.location.equals(finalCurrentSpotChecking) && piece.name.equals("rook") && piece.turn == 0 && piece.color == this.color) {
+                                this.availableLocation.add(this.board[row][col-2]);
+                            }
+                        }));
+                    }
 
                 }
 
@@ -397,8 +461,6 @@ public class King extends Piece {
 
 
                 }
-
-                //TODO add collision detection
 
 
         } catch (IndexOutOfBoundsException e) {

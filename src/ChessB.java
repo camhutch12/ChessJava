@@ -390,20 +390,20 @@ public class ChessB extends JPanel implements ActionListener {
             }
 
             if (otherPiece == null) {
-                piece.location = key;
                 piece.setX((int) rectangle.getX());
                 piece.setY((int) rectangle.getY());
                 piece.move(key);
+                repaint();
 
             } else {
                 String oldLocation = piece.location;
                 int oldX = piece.getX();
                 int oldY = piece.getY();
 
-                piece.location = key;
                 piece.setX((int) rectangle.getX());
                 piece.setY((int) rectangle.getY());
                 piece.move(key);
+                repaint();
 
                 if (piece.checkCollision(otherPiece)) {
                     System.out.println("Need to remove other peice");
@@ -441,10 +441,10 @@ public class ChessB extends JPanel implements ActionListener {
 
                 }
                 else {
-                    piece.location = oldLocation;
                     piece.setX(oldX);
                     piece.setY(oldY);
                     piece.move(oldLocation);
+                    repaint();
                 }
 
 

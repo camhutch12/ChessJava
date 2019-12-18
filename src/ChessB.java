@@ -1,16 +1,18 @@
 import javax.swing.*;
+import javax.swing.event.ListDataListener;
 import java.awt.*;
 import java.awt.List;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Stream;
 
 
 public class ChessB extends JPanel implements ActionListener {
-
+    private static Scanner scanner = new Scanner(System.in);
     private Piece piece;
     Map<String, Rectangle> mapLocationToCords;
     java.util.List<Piece> pawnArray;
@@ -28,6 +30,12 @@ public class ChessB extends JPanel implements ActionListener {
     boolean playersTurn = true;
     String player1;
     String player2;
+    boolean startGame = false;
+    Button btn;
+    Button btn2;
+    Button btn3;
+    boolean playerPreferanceClicked = false;
+    Map<String,String> loadState;
 
 
     java.util.List<Piece> whitePiecesOnBoard;
@@ -43,11 +51,162 @@ public class ChessB extends JPanel implements ActionListener {
             {"a2", "b2", "c2", "d2", "e2", "f2", "g2", "h2"},
             {"a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1"}};
     private boolean moveOccured;
+    java.util.List<Rectangle> inCheckTiles = new ArrayList<>();
 
 
     public ChessB() {
+        initStartMenu();
         initPieces();
         initUI();
+    }
+    private void temp(JButton button){
+        this.add(button);
+    }
+    private void initStartMenu() {
+        java.util.List<Integer> numList = new ArrayList<>();
+        JButton button = new JButton("Click me");
+        JButton pvpBtn = new JButton("PVP");
+        JButton aiBtn = new JButton("Play Vs Computer");
+        JButton loadFile = new JButton("Load File");
+        SpinnerNumberModel spinnerNumberModel;
+        Integer current = 2;
+        Integer min = 1;
+        Integer max = 5;
+        Integer step = 1;
+        spinnerNumberModel = new SpinnerNumberModel(current,min,max,step);
+        JSpinner jSpinner = new JSpinner(spinnerNumberModel);
+        JButton startAi = new JButton("Start Game");
+        JButton testingBtn = new JButton("Testing");
+        JTextField txtChooser = new JTextField(20);
+
+
+
+
+        this.add(pvpBtn);
+        pvpBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                //TODO play PVP
+                startGame = true;
+                remove(button);
+                remove(pvpBtn);
+                remove(aiBtn);
+                remove(testingBtn);
+                remove(loadFile);
+                remove(txtChooser);
+                System.out.println("Start PVP");
+                startGame = true;
+                ChessB.super.validate();
+                repaint();
+
+
+            }
+        });
+
+        add(aiBtn);
+        aiBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                System.out.println("Start Ai");
+                remove(button);
+                remove(pvpBtn);
+                remove(aiBtn);
+                remove(testingBtn);
+                add(jSpinner);
+                add(startAi);
+                ChessB.super.validate();
+                startAi.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent actionEvent) {
+                        startGame = true;
+                        remove(startAi);
+                        remove(jSpinner);
+                        repaint();
+                        ChessB.super.validate();
+                    }
+                });
+
+                ChessB.super.validate();
+            }
+        });
+
+        this.add(testingBtn);
+        testingBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+            add(txtChooser);
+            add(loadFile);
+            validate();
+
+            loadFile.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    String txt = txtChooser.getText()+".txt";
+                    System.out.println(txt);
+                    try {
+                        loadFile(txt);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
+
+
+            }
+        });
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                playerPreferanceClicked = true;
+
+
+
+
+                ChessB.super.validate();
+            }
+        });
+
+        if (playerPreferanceClicked){
+
+        this.remove(button);
+        this.add(pvpBtn);
+        this.add(aiBtn);
+        }
+        //this.remove(button);
+
+
+
+    }
+
+
+    private void saveFile(Map<String,String> locationsStates) throws IOException{
+        try(FileWriter pieceAndLocations = new FileWriter("testFiles.txt");){
+
+        }
+    }
+
+    private void loadFile(String fileName) throws IOException {
+        this.loadState = new HashMap<>();
+   try(Scanner scanner = new Scanner(new BufferedReader(new FileReader(fileName)))){
+       scanner.useDelimiter(":");
+        while (scanner.hasNext()){
+            String peice = scanner.next();
+            scanner.skip(scanner.delimiter());
+            String location = scanner.next();
+            scanner.nextLine();
+            System.out.println("Importing Piece: " + peice + " Location: " + location);
+        }
+   }
+   catch (IOException e){
+       e.printStackTrace();
+   }
+
+
+    }
+
+    private void gamePreferance(MouseEvent e){
+        System.out.println();
     }
 
     private void initUI() {
@@ -136,7 +295,7 @@ public class ChessB extends JPanel implements ActionListener {
         this.black_pieces.add(7, new Rook("rook", "black", "h8"));
 
         this.whitePieces.add(0, new Rook("rook", "white", "a1"));
-        this.whitePieces.add(1, new Knight("knight", "white", "b1,"));
+        this.whitePieces.add(1, new Knight("knight", "white", "b1"));
         this.whitePieces.add(2, new Bishop("bishop", "white", "c1"));
         this.whitePieces.add(3, new Queen("queen", "white", "d1"));
         this.whitePieces.add(4, new King("king", "white", "e1"));
@@ -253,8 +412,18 @@ public class ChessB extends JPanel implements ActionListener {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        if (!this.startGame) {
+            g.setColor(Color.lightGray);
+            g.fillRect(0,0,Constants.width,Constants.hieght);
+            g.setColor(Color.red);
+            g.drawString("CHess Game", 150, 240);
+
+        }
+        else {
         drawBoard(g);
         doDraw(g);
+
+        }
         Toolkit.getDefaultToolkit().sync();
     }
 
@@ -302,7 +471,18 @@ public class ChessB extends JPanel implements ActionListener {
 //                System.out.println(r.getMinX() + " " + r.getMaxX());
 //                System.out.println(r.getMinY() + "," + r.getMaxY());
 //                System.out.println(r.getWidth() + " " + r.getHeight());
-                g2d.fillRect(((int) r.getMinX()), ((int) r.getMinY()) - 30, (int) r.getWidth(), (int) r.getHeight());
+                g2d.fillRect(((int) r.getMinX()), ((int) r.getMinY()), (int) r.getWidth(), (int) r.getHeight());
+            }
+        }
+
+        if (!this.inCheckTiles.isEmpty()) {
+            for (Rectangle r : this.inCheckTiles
+            ) {
+                g2d.setColor(Color.MAGENTA);
+//                System.out.println(r.getMinX() + " " + r.getMaxX());
+//                System.out.println(r.getMinY() + "," + r.getMaxY());
+//                System.out.println(r.getWidth() + " " + r.getHeight());
+                g2d.fillRect(((int) r.getMinX()), ((int) r.getMinY()), (int) r.getWidth(), (int) r.getHeight());
             }
         }
 
@@ -394,7 +574,7 @@ public class ChessB extends JPanel implements ActionListener {
             }
 
             if (otherPiece == null) {
-                piece.location = key;
+
                 piece.setX((int) rectangle.getX());
                 piece.setY((int) rectangle.getY());
                 this.moveOccured = true;
@@ -405,7 +585,7 @@ public class ChessB extends JPanel implements ActionListener {
                 int oldX = piece.getX();
                 int oldY = piece.getY();
 
-                piece.location = key;
+
                 piece.setX((int) rectangle.getX());
                 piece.setY((int) rectangle.getY());
                 this.moveOccured = true;
@@ -482,25 +662,23 @@ public class ChessB extends JPanel implements ActionListener {
             if (blackKing != null) {
                 if (piece.checkHasOccured(blackKing)) {
 
-                    //TODO implement red high between attacker and king
 
-
+                    shadeTilesRed(blackKing, blackKing.getX(), blackKing.getY());
+                    repaint();
 
                 }
             }
 
 
-        }
-
-        else if (piece.color.equals("black")){
+        } else if (piece.color.equals("black")) {
             if (whiteKing != null) {
                 if (piece.checkHasOccured(whiteKing)) {
-                    //TODO implement red hightbetween attacker and king
+                    shadeTilesRed(whiteKing, whiteKing.getX(), whiteKing.getY());
+                    repaint();
 
                 }
             }
         }
-
 
 
         if (piece instanceof Pawn) {
@@ -537,29 +715,27 @@ public class ChessB extends JPanel implements ActionListener {
     }
 
 
-    private void shadeTilesRed (Piece clickedPiece, int posX, int posY) {
-        this.shadedTiles.clear();
+    private void shadeTilesRed(Piece clickedPiece, int posX, int posY) {
+
         if (clickedPiece != null) {
             System.out.println(clickedPiece);
             this.selectedPiece = clickedPiece;
             this.selectedPiece_loc = clickedPiece.location;
-            clickedPiece.availableMoves();
-            java.util.List<String> available_moves = clickedPiece.availableLocation;
 
-            if (available_moves != null) {
-                for (String s : available_moves) {
-                    Rectangle rec = mapLocationToCords.get(s);
+
+            if (this.inCheckTiles != null) {
+
+                Rectangle rec = mapLocationToCords.get(clickedPiece.location);
 //                    System.out.println("rec min in" + rec.getMinX() + "," + rec.getMinY());
 //                    System.out.println("rec max in" + rec.getMaxX() + "," + rec.getMaxY());
-                    this.shadedTiles.add(rec);
+                this.shadedTiles.add(rec);
 
-                }
-                System.out.println(available_moves.toString());
             }
 
         }
-    }
 
+
+    }
 
 
     private boolean pawnToQueen(Piece piece) {

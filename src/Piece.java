@@ -230,15 +230,15 @@ public abstract class Piece extends MouseAdapter {
 
         System.out.println("name = "+this.name+", turn = "+this.turn+", dis = "+dis);
 
-        if(this.name == "king" && this.turn == 0 && Math.abs(dis) == 2){
+        if(this.name.equals("king") && this.turn == 0 && Math.abs(dis) == 2){
             //king moved right
 
             Piece onB;
             List<Piece> friendlies = allPiecesOnBoard;
-            if(this.color == "white"){
+            if(this.color.equals("white")){
                 friendlies = whitePiecesOnBoard;
             }
-            if(this.color == "black"){
+            if(this.color.equals("black")){
                 friendlies = blackPiecesOnBoard;
             }
 
@@ -276,7 +276,7 @@ public abstract class Piece extends MouseAdapter {
                     rPos[1] = this.location.charAt(1);
                     newPos[1] = this.location.charAt(1);
                     String newP = String.valueOf(rPos);
-                    if(onB.name == "rook" && onB.location.equals(newP)){
+                    if(onB.name.equals("rook") && onB.location.equals(newP)){
                         int x1 = Constants.width/8;
                         int y1 = Constants.hieght/8;
                         //distances from 0,0 aka a1

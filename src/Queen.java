@@ -43,6 +43,11 @@ public class Queen extends Piece {
         loadImage(this.file);
     }
 
+    @Override
+    public void findRoute(King king, String locationForKing) {
+
+    }
+
 
     private void diagnolMoves(List<Piece> colorList, List<Piece> oppentList){
         helperAvailableMoves(colorList,oppentList);

@@ -13,6 +13,7 @@ public abstract class Piece extends MouseAdapter {
     int x, y;
     int dy, dx;
     int width, height;
+    int turn;
     String file;
     String color;
     String name;
@@ -30,6 +31,7 @@ public abstract class Piece extends MouseAdapter {
     public Piece(String name, String color, String location) {
         this.x = 0;
         this.y = 0;
+        this.turn = 0;
         this.color = color;
         this.name = name;
         this.location = location;
@@ -215,11 +217,77 @@ public abstract class Piece extends MouseAdapter {
     }
 
     public void move(String key) {
+        int pos1 = this.location.charAt(0);
         this.location = key;
         setIndex ();
+        int pos2 = this.location.charAt(0);
 
+        int dis = pos1-pos2;
 
+        System.out.println("name = "+this.name+", turn = "+this.turn+", dis = "+dis);
 
+        if(this.name == "king" && this.turn == 0 && Math.abs(dis) == 2){
+            //king moved right
+
+            Piece onB;
+            List<Piece> friendlies = allPiecesOnBoard;
+            if(this.color == "white"){
+                friendlies = whitePiecesOnBoard;
+            }
+            if(this.color == "black"){
+                friendlies = blackPiecesOnBoard;
+            }
+
+            if(dis == 2){
+                for(int i = 0; i < friendlies.size(); i++) {
+                    onB = friendlies.get(i);
+                    char[] rPos = new char[2];
+                    char[] newPos = new char[2];
+                    rPos[0] = 'a';
+                    newPos[0] = 'd';
+                    rPos[1] = this.location.charAt(1);
+                    newPos[1] = this.location.charAt(1);
+                    String newP = String.valueOf(rPos);
+                    if(onB.name == "rook" && onB.location.equals(newP)){
+                        int x1 = Constants.width/8;
+                        int y1 = Constants.hieght/8;
+                        //distances from 0,0 aka a1
+                        int disX = ((int) newPos[0])-((int) 'a');
+                        int disY = ((int) '8')-((int) newPos[1]);
+                        //
+                        onB.setX((x1*disX));
+                        onB.setY(y1*disY);
+                        onB.move(String.valueOf(newPos));
+                    }
+                }
+            }
+            //king moved left
+            if(dis == -2){
+                for(int i = 0; i < friendlies.size(); i++) {
+                    onB = friendlies.get(i);
+                    char[] rPos = new char[2];
+                    char[] newPos = new char[2];
+                    rPos[0] = 'h';
+                    newPos[0] = 'f';
+                    rPos[1] = this.location.charAt(1);
+                    newPos[1] = this.location.charAt(1);
+                    String newP = String.valueOf(rPos);
+                    if(onB.name == "rook" && onB.location.equals(newP)){
+                        int x1 = Constants.width/8;
+                        int y1 = Constants.hieght/8;
+                        //distances from 0,0 aka a1
+                        int disX = ((int) newPos[0])-((int) 'a');
+                        int disY = ((int) '8')-((int) newPos[1]);
+                        //
+                        onB.setX((x1*disX));
+                        onB.setY(y1*disY);
+                        onB.move(String.valueOf(newPos));
+                    }
+                }
+            }
+        }
+
+        this.turn++;
     }
 
     public abstract void setupImage(String file);

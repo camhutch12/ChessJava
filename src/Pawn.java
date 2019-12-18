@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -99,7 +100,6 @@ public class Pawn extends Piece {
 
                     if (piece.location.equals(currentSpotChecking2)) {
                         this.routeToCheck.add(currentSpotChecking2);
-
                     }
                 }
             }
@@ -267,6 +267,24 @@ public class Pawn extends Piece {
                     }
                 }
             }
+            //En Pasant
+            if(this.row == 4 && this.col - 1 > -1 && this.col - 1 < 8){
+                currentSpotChecking = this.board[4][col-1];
+                currentSpotChecking2 = this.board[4][col+1];
+                for(Piece piece : oppentList){
+                    char[] n = piece.name.toCharArray();
+                    char[] copy = Arrays.copyOf(n, 4);
+                    String nam = String.valueOf(copy);
+                    System.out.println("nam = "+nam);
+                    if(nam.equals("Pawn") && piece.location.equals(currentSpotChecking) && piece.turn == 1){
+                        this.availableLocation.add(this.board[5][col-1]);
+                    }
+                    if(nam.equals("Pawn") && piece.location.equals(currentSpotChecking2) && piece.turn == 1){
+                        this.availableLocation.add(this.board[5][col+1]);
+                    }
+                }
+            }
+
         } else if (this.color.equals("white")) {
 
             if (this.row - 1 > -1 && this.row - 1 < 8 && this.col + 1 > -1 && this.col + 1 < 8) {
@@ -282,7 +300,6 @@ public class Pawn extends Piece {
                 }
 
             }
-
             if (this.row - 1 > -1 && this.row - 1 < 8 && this.col - 1 > -1 && this.col - 1 < 8) {
                 currentSpotChecking = this.board[row - 1][col - 1];
                 for (Piece piece : oppentList) {
@@ -292,19 +309,28 @@ public class Pawn extends Piece {
                         this.availableLocation.add(currentSpotChecking);
 
                     }
-
                 }
             }
-
-
+            //En Pasant
+            if(this.row == 3 && this.col - 1 > -1 && this.col - 1 < 8){
+                currentSpotChecking = this.board[3][col-1];
+                currentSpotChecking2 = this.board[3][col+1];
+                for(Piece piece : oppentList){
+                    char[] n = piece.name.toCharArray();
+                    char[] copy = Arrays.copyOf(n, 4);
+                    String nam = String.valueOf(copy);
+                    System.out.println("nam = "+nam);
+                    if(nam.equals("Pawn") && piece.location.equals(currentSpotChecking) && piece.turn == 1){
+                        this.availableLocation.add(this.board[2][col-1]);
+                    }
+                    if(nam.equals("Pawn") && piece.location.equals(currentSpotChecking2) && piece.turn == 1){
+                        this.availableLocation.add(this.board[2][col+1]);
+                    }
+                }
+            }
         }
-
-
-
         this.checkPieces();
         System.out.println();
-
-
     }
 
 

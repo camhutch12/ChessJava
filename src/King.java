@@ -35,6 +35,11 @@ public class King extends Piece {
         loadImage(this.file);
     }
 
+    @Override
+    public void findRoute() {
+
+    }
+
     private void diagnolMoves(List<Piece> colorList, List<Piece> oppentList){
         int row = this.row;
         int col = this.col;

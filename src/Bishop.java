@@ -446,5 +446,10 @@ if (this.location == "d5")
         loadImage(this.file);
     }
 
+    @Override
+    public void findRoute() {
+
+    }
+
 
 }

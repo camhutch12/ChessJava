@@ -232,4 +232,9 @@ public class Rook extends Piece {
         this.file = this.color == "white" ? "white-rooke.png" : "black-rook.png";
         loadImage(this.file);
     }
+
+    @Override
+    public void findRoute() {
+
+    }
 }

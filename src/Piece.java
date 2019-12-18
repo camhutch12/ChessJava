@@ -2,10 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public abstract class Piece extends MouseAdapter {
     private Image image;
@@ -211,8 +209,6 @@ public abstract class Piece extends MouseAdapter {
         image = image.getScaledInstance ((image.getWidth (null) / 2), (image.getHeight (null) / 2), Image.SCALE_DEFAULT);
         this.width = image.getWidth (null);
         this.height = image.getHeight (null);
-
-
     }
 
     public void ontouch(MouseEvent e) {
@@ -222,17 +218,12 @@ public abstract class Piece extends MouseAdapter {
     public void move(String key) {
         int pos1 = this.location.charAt(0);
         this.location = key;
-        this.turn++;
         setIndex ();
         int pos2 = this.location.charAt(0);
 
         int dis = pos1-pos2;
 
-        System.out.println("name = "+this.name+", turn = "+this.turn+", dis = "+dis);
-
         if(this.name == "king" && this.turn == 0 && Math.abs(dis) == 2){
-            //king moved right
-
             Piece onB;
             List<Piece> friendlies = allPiecesOnBoard;
             if(this.color == "white"){
@@ -241,7 +232,7 @@ public abstract class Piece extends MouseAdapter {
             if(this.color == "black"){
                 friendlies = blackPiecesOnBoard;
             }
-
+            //king moved left
             if(dis == 2){
                 for(int i = 0; i < friendlies.size(); i++) {
                     onB = friendlies.get(i);
@@ -265,8 +256,9 @@ public abstract class Piece extends MouseAdapter {
                     }
                 }
             }
-            //king moved left
+            //king moved right
             if(dis == -2){
+
                 for(int i = 0; i < friendlies.size(); i++) {
                     onB = friendlies.get(i);
                     char[] rPos = new char[2];

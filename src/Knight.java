@@ -406,4 +406,9 @@ public class Knight extends Piece {
         this.file = this.color.equals("white") ? "white-knight.png" : "black-knight.png";
         loadImage(this.file);
     }
+
+    @Override
+    public void findRoute() {
+
+    }
 }

@@ -31,8 +31,13 @@ public class King extends Piece {
 
     @Override
     public void setupImage(String file) {
-        this.file = this.color == "white" ? "white-king.png" : "black-king.png";
+        this.file = this.color.equals("white") ? "white-king.png" : "black-king.png";
         loadImage(this.file);
+    }
+
+    @Override
+    public void findRoute(King king, String locationForKing) {
+
     }
 
     private void diagnolMoves(List<Piece> colorList, List<Piece> oppentList){
@@ -472,7 +477,7 @@ public class King extends Piece {
     }
 
     public void isInCheck(){
-        List<Piece> whoCanKill = new ArrayList<>();
+
         if (this.color.equals("black")){
 
             for (Piece p :

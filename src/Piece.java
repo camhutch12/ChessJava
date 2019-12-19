@@ -24,6 +24,8 @@ public abstract class Piece extends MouseAdapter {
     static List<Piece> blackPiecesOnBoard;
     static List<Piece> whitePiecesOnBoard;
     Map<String,Piece> canAttack;
+    List<String> routeToCheck;
+    List<Piece> whoCanKill;
 
 
 
@@ -41,6 +43,9 @@ public abstract class Piece extends MouseAdapter {
         blackPiecesOnBoard = new ArrayList<>();
         whitePiecesOnBoard = new ArrayList<>();
         this.canAttack = new HashMap<>();
+        this.turn = 0;
+        this.routeToCheck = new ArrayList<>();
+        this.whoCanKill = new ArrayList<>();
     }
 
 
@@ -212,9 +217,7 @@ public abstract class Piece extends MouseAdapter {
 
     }
 
-    public void ontouch(MouseEvent e) {
-        dy = 30;
-    }
+
 
     public void move(String key) {
         int pos1 = this.location.charAt(0);
@@ -226,15 +229,15 @@ public abstract class Piece extends MouseAdapter {
 
         System.out.println("name = "+this.name+", turn = "+this.turn+", dis = "+dis);
 
-        if(this.name == "king" && this.turn == 0 && Math.abs(dis) == 2){
+        if(this.name.equals("king") && this.turn == 0 && Math.abs(dis) == 2){
             //king moved right
 
             Piece onB;
             List<Piece> friendlies = allPiecesOnBoard;
-            if(this.color == "white"){
+            if(this.color.equals("white")){
                 friendlies = whitePiecesOnBoard;
             }
-            if(this.color == "black"){
+            if(this.color.equals("black")){
                 friendlies = blackPiecesOnBoard;
             }
 
@@ -248,7 +251,7 @@ public abstract class Piece extends MouseAdapter {
                     rPos[1] = this.location.charAt(1);
                     newPos[1] = this.location.charAt(1);
                     String newP = String.valueOf(rPos);
-                    if(onB.name == "rook" && onB.location.equals(newP)){
+                    if(onB.name.equals("rook") && onB.location.equals(newP)){
                         int x1 = Constants.width/8;
                         int y1 = Constants.hieght/8;
                         //distances from 0,0 aka a1
@@ -272,7 +275,7 @@ public abstract class Piece extends MouseAdapter {
                     rPos[1] = this.location.charAt(1);
                     newPos[1] = this.location.charAt(1);
                     String newP = String.valueOf(rPos);
-                    if(onB.name == "rook" && onB.location.equals(newP)){
+                    if(onB.name.equals("rook") && onB.location.equals(newP)){
                         int x1 = Constants.width/8;
                         int y1 = Constants.hieght/8;
                         //distances from 0,0 aka a1
@@ -303,6 +306,7 @@ public abstract class Piece extends MouseAdapter {
 
         System.out.println ("Hii");
     }
+
 
 
     public Rectangle getBounds() {
@@ -378,5 +382,18 @@ public abstract class Piece extends MouseAdapter {
         }
     }
 
+    public boolean checkHasOccured(King king){
+        this.availableMoves();
+        if (this.availableLocation.contains(king.location)){
+            return true;
+        }
+        else return false;
+    }
+
+    public List<Piece> checkHasOccuredList(Piece piece){
+       return null;
+    }
+
+    public abstract void findRoute(King king, String locationForKing);
 
 }

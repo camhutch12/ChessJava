@@ -35,7 +35,7 @@ public class Rook extends Piece {
         AtomicBoolean oppentNorth = new AtomicBoolean(true);
         AtomicBoolean oppentSouth = new AtomicBoolean(true);
 
-        try {
+
 
             // checks if moves will be valid for north, south, east and west quardants
             for (int i = 1; i < this.getBoard().length; i++) {
@@ -44,12 +44,11 @@ public class Rook extends Piece {
                     if (west.get() && oppentWest.get()) {
                         currentSpotChecking = this.board[row][col + i];
                         String finalCurrentSpotChecking = currentSpotChecking;
-                        colorList.forEach((piece -> {
+                        for (Piece piece : colorList) {
                             if (piece.location.equals(finalCurrentSpotChecking)) {
                                 west.set(false);
                             }
-                        }));
-
+                        }
 
 
                     }
@@ -216,9 +215,7 @@ public class Rook extends Piece {
                 //TODO add collision detection
             }
 
-        } catch (IndexOutOfBoundsException e) {
-            System.out.println("Index want out of bounds");
-        }
+
 
         this.checkPieces();
         System.out.println();
@@ -234,5 +231,10 @@ public class Rook extends Piece {
     public void setupImage(String file) {
         this.file = this.color == "white" ? "white-rooke.png" : "black-rook.png";
         loadImage(this.file);
+    }
+
+    @Override
+    public void findRoute(King king, String locationForKing) {
+
     }
 }

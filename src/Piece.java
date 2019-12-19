@@ -217,9 +217,7 @@ public abstract class Piece extends MouseAdapter {
 
     }
 
-    public void ontouch(MouseEvent e) {
-        dy = 30;
-    }
+
 
     public void move(String key) {
         int pos1 = this.location.charAt(0);

@@ -13,7 +13,7 @@ public class App extends JFrame {
 
         add(new ChessB());
 
-        setSize(620, 600);
+        setSize(620, 700);
         //setPreferredSize(new Dimension(600,600));
         setTitle("Application");
 

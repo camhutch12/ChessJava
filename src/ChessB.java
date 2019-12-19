@@ -86,6 +86,10 @@ public class ChessB extends JPanel implements ActionListener {
 
 
 
+        super.validate();
+
+
+
 
         this.add(pvpBtn);
         pvpBtn.addActionListener(new ActionListener() {
@@ -109,6 +113,7 @@ public class ChessB extends JPanel implements ActionListener {
         });
 
         add(aiBtn);
+
         aiBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -267,6 +272,10 @@ public class ChessB extends JPanel implements ActionListener {
         }
 
 
+
+
+
+
     }
 
     // does the basic intilization of the Chess peices
@@ -389,7 +398,7 @@ public class ChessB extends JPanel implements ActionListener {
                 Pair<Double, Double> points;
                 if (i == 6 || i == 7) {
                     //System.out.println(startposY+widthPerSqaure);
-                    points = new Pair((startposX + widthPerSqaure - 30 + 0.0) - middleWidth, (startposY + 15) - middleWidth);
+                    points = new Pair((startposX + widthPerSqaure - 30 + 0.0) - middleWidth, (startposY + 15));
 
                 } else {
                     points = new Pair((startposX + widthPerSqaure - 30 + 0.0) - middleWidth, (startposY + widthPerSqaure - 30) - middleWidth);
@@ -419,9 +428,8 @@ public class ChessB extends JPanel implements ActionListener {
         super.paintComponent(g);
         if (!this.startGame) {
             g.setColor(Color.lightGray);
-            g.fillRect(0,0,Constants.width,Constants.hieght);
-            g.setColor(Color.red);
-            g.drawString("CHess Game", 150, 240);
+            g.fillRect(0,0,this.getWidth(),this.getHeight());
+
 
         }
         else {
@@ -442,14 +450,14 @@ public class ChessB extends JPanel implements ActionListener {
 
         g2d.setRenderingHints(rh);
         Dimension size = getSize();
-        double w = size.getWidth();
-        double h = size.getHeight();
+        double w = Constants.width;
+        double h = Constants.hieght;
         int middleWidth;
         int middleHeight;
         int startposX = 0;
         int startposY = 0;
-        int heightPerSqaure = (int) size.getHeight() / 8;
-        int widthPerSqaure = (int) size.getWidth() / 8;
+        int heightPerSqaure = (int) w / 8;
+        int widthPerSqaure = (int) h / 8;
 
         g.setColor(Color.green);
         for (int i = 0; i < 8; i++) {
